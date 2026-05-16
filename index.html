@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Hydrogen Investment Decision Dashboard</title>
+<title>East Coast Hydrogen Network Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -20,7 +20,8 @@ button { padding:8px; margin:5px; border:none; border-radius:5px; cursor:pointer
 
 <body>
 
-<h1>Hydrogen Investment Decision Dashboard</h1>
+<h1>East Coast Hydrogen Network Dashboard</h1>
+<p>Teesside → Yorkshire → Humber → East Midlands</p>
 
 <div class="card">
 <h3>Investment Control</h3>
@@ -32,102 +33,204 @@ Multiplier: <span id="mult"></span>x
 <h3>Strategy</h3>
 <button onclick="setStrategy('balanced')" id="b1">Balanced</button>
 <button onclick="setStrategy('bottleneck')" id="b2">Bottleneck Focus</button>
-<button onclick="setStrategy('missing')" id="b3">Missing Links</button>
+<button onclick="setStrategy('missing')" id="b3">Upstream Build</button>
 </div>
 
 <div class="card">
 <h3>KPIs</h3>
 <div class="kpi">Demand: <span id="demand"></span> TWh</div>
-<div class="kpi">Capacity: <span id="capacity"></span> TWh</div>
+<div class="kpi">Capacity (Network): <span id="capacity"></span> TWh</div>
 <div class="kpi">Delivered: <span id="delivered"></span> TWh</div>
 <div class="kpi">Unmet: <span id="unmet"></span> TWh</div>
 <div class="kpi">Coverage: <span id="coverage"></span></div>
 </div>
 
 <div class="card">
-<h3>Investment Efficiency</h3>
-<div class="kpi">£/TWh: <span id="eff"></span></div>
-<div class="kpi">Readiness: <span id="ready"></span></div>
+<h3>Corridor Utilisation</h3>
+<div id="corridors"></div>
 </div>
 
 <div class="card">
-<h3>System Chart</h3>
 <canvas id="chart"></canvas>
 </div>
 
 <script>
 
+// ----------- NETWORK DATA (embedded instead of JSON) ----------
+const network = {
+  nodes: ["TEES","YORK","HUMB","EMID"],
+
+  edges: [
+    { id:"PU1", name:"Teesside → Yorkshire", from:"TEES", to:"YORK", cap:18 },
+    { id:"PU2", name:"Yorkshire → Humber", from:"YORK", to:"HUMB", cap:18 },
+    { id:"PU3", name:"Humber → East Midlands", from:"HUMB", to:"EMID", cap:14 }
+  ],
+
+  supply: [
+    {node:"TEES", twh:28},
+    {node:"HUMB", twh:22}
+  ],
+
+  demand: [
+    {node:"YORK", twh:20},
+    {node:"HUMB", twh:25},
+    {node:"EMID", twh:18}
+  ]
+};
+
 let strategy = "balanced";
 
-const demand = 70.32;
-const baseCapacity = 20;
-const baseCost = 2;
+// ----------- MAX FLOW (Edmonds–Karp) ----------
+function maxFlow(edges, supply, demand){
 
-// Chart
-const chart = new Chart(document.getElementById("chart"), {
-    type: "bar",
-    data: {
-        labels: ["Demand","Capacity","Delivered","Unmet"],
-        datasets: [{
-            label:"System",
-            data:[0,0,0,0],
-            backgroundColor:["blue","green","purple","red"]
-        }]
+  const adj = {};
+  const cap = {};
+
+  function addEdge(u,v,c){
+    if(!adj[u]) adj[u]=[];
+    if(!adj[v]) adj[v]=[];
+    adj[u].push(v);
+    adj[v].push(u);
+    cap[u+"-"+v]=(cap[u+"-"+v]||0)+c;
+    cap[v+"-"+u]=(cap[v+"-"+u]||0);
+  }
+
+  const S="S", T="T";
+
+  edges.forEach(e=>addEdge(e.from,e.to,e.cap));
+  supply.forEach(s=>addEdge(S,s.node,s.twh));
+  demand.forEach(d=>addEdge(d.node,T,d.twh));
+
+  let flow=0;
+
+  while(true){
+    let q=[S], parent={};
+    parent[S]=null;
+
+    while(q.length){
+      let u=q.shift();
+      for(let v of adj[u]||[]){
+        if(parent[v]===undefined && cap[u+"-"+v]>0){
+          parent[v]=u;
+          q.push(v);
+        }
+      }
     }
+
+    if(parent[T]===undefined) break;
+
+    let aug=1e9;
+    for(let v=T;parent[v]!=null;v=parent[v]){
+      let u=parent[v];
+      aug=Math.min(aug,cap[u+"-"+v]);
+    }
+
+    for(let v=T;parent[v]!=null;v=parent[v]){
+      let u=parent[v];
+      cap[u+"-"+v]-=aug;
+      cap[v+"-"+u]+=aug;
+    }
+
+    flow+=aug;
+  }
+
+  const utilised = edges.map(e=>{
+    let used = e.cap - (cap[e.from+"-"+e.to]||0);
+    return {
+      ...e,
+      used,
+      utilisation: used/e.cap
+    }
+  });
+
+  const totalDemand = demand.reduce((s,d)=>s+d.twh,0);
+  const unmet = totalDemand - flow;
+  const coverage = flow/totalDemand;
+
+  return {flow,totalDemand,unmet,coverage,utilised};
+}
+
+// ----------- INVESTMENT ----------
+function applyInvestment(mult){
+
+  let edges = JSON.parse(JSON.stringify(network.edges));
+
+  let order =
+    strategy==="bottleneck" ? ["PU3","PU2","PU1"] :
+    strategy==="missing"   ? ["PU1","PU2","PU3"] :
+                              ["PU2","PU1","PU3"];
+
+  let inc = (mult-1)*10;
+
+  order.forEach(id=>{
+    let e = edges.find(x=>x.id===id);
+    if(e){
+      e.cap += inc/3;
+    }
+  });
+
+  return edges;
+}
+
+// ----------- CHART ----------
+const chart = new Chart(document.getElementById("chart"), {
+  type:"bar",
+  data:{
+    labels:["Demand","Capacity","Delivered","Unmet"],
+    datasets:[{
+      data:[0,0,0,0],
+      backgroundColor:["blue","green","purple","red"]
+    }]
+  }
 });
 
+// ----------- UPDATE ----------
 function update(){
 
-    let mult = parseFloat(slider.value);
+  let mult = parseFloat(slider.value);
 
-    let capacity = baseCapacity * mult;
+  let edges = applyInvestment(mult);
 
-    // strategy effects
-    if(strategy === "bottleneck"){
-        capacity *= 1.3;
-    }
-    if(strategy === "missing"){
-        capacity *= 1.5;
-    }
+  let result = maxFlow(edges,network.supply,network.demand);
 
-    let delivered = Math.min(capacity, demand);
-    let unmet = demand - delivered;
-    let coverage = (delivered/demand*100).toFixed(1)+"%";
+  document.getElementById("mult").innerText = mult;
+  document.getElementById("demand").innerText = result.totalDemand.toFixed(1);
+  document.getElementById("capacity").innerText = edges.reduce((s,e)=>s+e.cap,0).toFixed(1);
+  document.getElementById("delivered").innerText = result.flow.toFixed(1);
+  document.getElementById("unmet").innerText = result.unmet.toFixed(1);
+  document.getElementById("coverage").innerText = (result.coverage*100).toFixed(1)+"%";
 
-    // efficiency
-    let cost = baseCost * mult;
-    let eff = (cost*1000 / delivered).toFixed(0)+" £m/TWh";
+  chart.data.datasets[0].data = [
+    result.totalDemand,
+    edges.reduce((s,e)=>s+e.cap,0),
+    result.flow,
+    result.unmet
+  ];
+  chart.update();
 
-    let readiness = Math.min(100, (coverage.replace('%','')/80*100)).toFixed(0)+"%";
+  // Corridor table
+  let html = result.utilised.map(e=>{
+    let pct = (e.utilisation*100).toFixed(0);
+    let flag = e.utilisation>0.85 ? "⚠️" : "✅";
+    return `<p>${flag} ${e.name}: ${pct}% (used ${e.used.toFixed(1)} / ${e.cap.toFixed(1)})</p>`;
+  }).join("");
 
-    document.getElementById("mult").innerText = mult;
-    document.getElementById("demand").innerText = demand;
-    document.getElementById("capacity").innerText = capacity.toFixed(1);
-    document.getElementById("delivered").innerText = delivered.toFixed(1);
-    document.getElementById("unmet").innerText = unmet.toFixed(1);
-    document.getElementById("coverage").innerText = coverage;
-
-    document.getElementById("eff").innerText = eff;
-    document.getElementById("ready").innerText = readiness;
-
-    chart.data.datasets[0].data = [demand, capacity, delivered, unmet];
-    chart.update();
+  document.getElementById("corridors").innerHTML = html;
 }
 
+// ----------- STRATEGY ----------
 function setStrategy(s){
+  strategy=s;
 
-    strategy = s;
+  document.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+  if(s==="balanced") b1.classList.add("active");
+  if(s==="bottleneck") b2.classList.add("active");
+  if(s==="missing") b3.classList.add("active");
 
-    document.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
-
-    if(s==="balanced") b1.classList.add("active");
-    if(s==="bottleneck") b2.classList.add("active");
-    if(s==="missing") b3.classList.add("active");
-
-    update();
+  update();
 }
 
-slider.addEventListener("input", update);
+slider.addEventListener("input",update);
 setStrategy("balanced");
 
 </script>
