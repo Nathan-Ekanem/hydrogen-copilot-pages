@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>INTERNAL – East Coast Hydrogen Network</title>
+
+<style>
+body {
+  font-family: Arial;
+  margin:0;
+  background:#0f172a;
+  color:white;
+}
+
+/* LOCK SCREEN */
+#lock {
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:#020617;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+#lock input {
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+}
+
+#lock button {
+  margin-top:10px;
+  padding:10px 15px;
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:8px;
+}
+
+/* INTERNAL WARNING */
+.warning {
+  background:red;
+  padding:10px;
+  font-weight:bold;
+  text-align:center;
+}
+
+/* CARD UI */
+.card {
+  background:white;
+  color:black;
+  padding:15px;
+  border-radius:10px;
+  margin:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- 🔒 LOCK SCREEN -->
+<div id="lock">
+  <h2>🔒 Internal Access Only</h2>
+  <p>Enter password to access East Coast Hydrogen model</p>
+  <input type="password" id="pw" placeholder="Password">
+  <button onclick="unlock()">Enter</button>
+  <p id="error" style="color:red;"></p>
+</div>
+
+<!-- 🔴 INTERNAL BANNER -->
+<div class="warning">
+⚠️ INTERNAL VERSION – EAST COAST HYDROGEN NETWORK (DO NOT SHARE)
+</div>
+
+<h1 style="color:#60a5fa; padding:10px;">
+East Coast Hydrogen Network Dashboard
+</h1>
+
+<div class="card">
+<h3>Scenario Controls</h3>
+
+Year:
+<input type="range" min="2030" max="2040" value="2030" id="year">
+
+Investment multiplier:
+<input type="range" min="1" max="5" step="0.5" value="1" id="slider">
+</div>
+
+<div class="card">
+<h3>KPIs</h3>
+Demand: <span id="demand"></span><br>
+Delivered: <span id="delivered"></span><br>
+Unmet: <span id="unmet"></span><br>
+Coverage: <span id="coverage"></span><br>
+</div>
+
+<div class="card">
+<h3>Network Diagram</h3>
+<svg id="net" width="600" height="300"></svg>
+</div>
+
+<div class="card">
+<h3>Decision Summary</h3>
+<p id="decision"></p>
+</div>
+
+<div class="card">
+<h3>AI Insight</h3>
+<p id="insight"></p>
+</div>
+
+<script>
+
+// 🔒 PASSWORD
+const PASSWORD = "eastcoast2026";
+
+function unlock(){
+  if(pw.value === PASSWORD){
+    lock.style.display = "none";
+  } else {
+    error.innerText = "Incorrect password";
+  }
+}
+
+// NETWORK
+const nodes = {
+  TEES:[80,150],
+  YORK:[220,250],
+  HUMB:[380,130],
+  EMID:[520,240]
+};
+
+let edges = [
+  {id:"A", from:"TEES", to:"YORK", cap:18},
+  {id:"B", from:"YORK", to:"HUMB", cap:18},
+  {id:"C", from:"HUMB", to:"EMID", cap:14}
+];
+
+const supply = {TEES:28, HUMB:22};
+const demandBase = {YORK:20, HUMB:25, EMID:18};
+
+function update(){
+
+  let mult = parseFloat(slider.value);
+  let yearVal = parseInt(year.value);
+
+  // growth
+  let demand = {};
+  for(let k in demandBase){
+    demand[k] = demandBase[k] * Math.pow(1.02, yearVal-2030);
+  }
+
+  let totalDemand = Object.values(demand).reduce((a,b)=>a+b,0);
+  let totalSupply = Object.values(supply).reduce((a,b)=>a+b,0);
+
+  // capacity scaling
+  let capacity = edges.reduce((s,e)=>s+e.cap,0) * mult;
+
+  let delivered = Math.min(capacity, totalDemand);
+  let unmet = totalDemand - delivered;
+  let coverage = delivered / totalDemand;
+
+  demandSpan = document.getElementById("demand");
+  deliveredSpan = document.getElementById("delivered");
+  unmetSpan = document.getElementById("unmet");
+  coverageSpan = document.getElementById("coverage");
+
+  demandSpan.innerText = totalDemand.toFixed(1);
+  deliveredSpan.innerText = delivered.toFixed(1);
+  unmetSpan.innerText = unmet.toFixed(1);
+  coverageSpan.innerText = (coverage*100).toFixed(1)+"%";
+
+  drawNetwork(mult);
+
+  // decision logic
+  let msg = "";
+  if(coverage > 0.8){
+    msg = "✅ System sufficient – focus on resilience.";
+  } else if(coverage > 0.6){
+    msg = "⚠️ Moderately constrained – upgrade key corridors.";
+  } else {
+    msg = "❌ System capacity insufficient – major expansion required.";
+  }
+
+  decision.innerText = msg;
+
+  // AI Insight
+  insight.innerText =
+    `At year ${yearVal}, the East Coast system is delivering ${(coverage*100).toFixed(1)}% of demand.
+Main action: increase capacity along Humber → East Midlands corridor or expand supply.`;
+}
+
+function drawNetwork(mult){
+
+  net.innerHTML = "";
+
+  edges.forEach(e=>{
+    let [x1,y1] = nodes[e.from];
+    let [x2,y2] = nodes[e.to];
+
+    let load = (e.cap*mult)/20;
+
+    let color = load > 1.2 ? "red" :
+                load > 1 ? "orange" : "green";
+
+    net.innerHTML += `<line x1=${x1} y1=${y1} x2=${x2} y2=${y2} stroke=${color} stroke-width=6 />`;
+  });
+
+  Object.entries(nodes).forEach(([k,[x,y]])=>{
+    net.innerHTML += `<circle cx=${x} cy=${y} r=15 fill=blue />`;
+    net.innerHTML += `<text x=${x-10} y=${y-20} fill=white>${k}</text>`;
+  });
+}
+
+slider.oninput = update;
+year.oninput = update;
+update();
+
+</script>
+
+</body>
+</html>
