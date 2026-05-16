@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hydrogen Network Decision Dashboard</title>
+  <meta name="description" content="Hydrogen investment and network readiness dashboard (screening-level).">
+  https://cdn.tailwindcss.comscript>
+  https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.jsscript>
+</head>
+
+<body class="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-slate-900">
+  <div class="max-w-6xl mx-auto p-6 space-y-6">
+
+    <!-- Header -->
+    <header class="rounded-2xl bg-gradient-to-r from-blue-500 via-indigo-600 to-fuchsia-600 text-white p-6 shadow-lg">
+      <h1 class="text-2xl font-bold">Hydrogen Network Decision Dashboard</h1>
+      <p class="text-sm opacity-90">Investment-driven capacity planning & readiness (screening-level proxy model)</p>
+      <div class="mt-3 text-xs opacity-90">
+        ./terms.htmlTerms of use</a> ·
+        ./privacy.htmlPrivacy statement</a>
+      </div>
+    </header>
+
+    <!-- Controls -->
+    <section class="bg-white rounded-xl shadow p-4 space-y-4">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 class="font-semibold">Investment Level</h2>
+          <p class="text-sm text-slate-500">Slide to scale investment and see impacts on capacity, readiness, and bottlenecks</p>
+        </div>
+        <div class="text-right">
+          <div class="text-sm text-slate-500">Investment proxy</div>
+          <div class="text-xl font-bold" id="invGBP">£2.0bn</div>
+          <div class="text-xs text-slate-400">(£2.0bn at 1×, linear proxy)</div>
+        </div>
+      </div>
+
+      <!-- Strategy -->
+      <div>
+        <div class="text-sm font-medium">Allocation strategy</div>
+        <div class="text-xs text-slate-500">Where incremental capacity is directed (corridors vs missing links)</div>
+        <div class="mt-2 flex flex-wrap gap-2" id="strategyButtons"></div>
+      </div>
+
+      <!-- Slider -->
+      <div class="relative">
+        <input id="invSlider" type="range" min="1" max="5" step="0.5" value="1" class="w-full accent-indigo-600">
+        <!-- Break-even marker -->
+        <div id="breakevenMarker" class="pointer-events-none absolute -top-2 h-10" style="left:50%;">
+          <div class="h-10 w-[2px] bg-slate-900/40"></div>
+          <div class="-mt-10 -translate-x-[38%] whitespace-nowrap rounded bg-slate-900 px-2 py-0.5 text-[10px] text-white">
+            80% target ≈ <span id="breakevenValue">2.5×</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary row -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
+        <div>
+          Multiplier: <span class="font-bold" id="multiplier">1.0×</span>
+          <div class="text-xs text-slate-500">Incremental capacity: +<span id="incCap">0.0</span> TWh/y</div>
+        </div>
+        <div>
+          Time-to-delivery (proxy): <span class="font-bold" id="deliveryWindow">10–15 years</span>
+        </div>
+        <div>
+          £/TWh delivered (avg): <span class="font-bold" id="avgEff">£100m/TWh</span>
+          <div class="text-xs text-slate-500">Marginal vs 1×: <span class="font-semibold" id="margEff">—</span></div>
+        </div>
+        <div>
+          Coverage: <span class="font-bold" id="coveragePct">0.0%</span>
+          <div class="text-xs text-slate-500">Unmet: <span id="unmet">0.0</span> TWh/y</div>
+        </div>
+      </div>
+
+      <!-- Readiness bar -->
+      <div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <span>Readiness to 80% target</span>
+          <span id="readinessPct">0.0%</span>
+        </div>
+        <div class="mt-1 h-2 w-full rounded-full bg-slate-100">
+          <div id="readinessBar" class="h-2 rounded-full bg-gradient-to-r from-emerald-500 to-green-600" style="width:0%"></div>
+        </div>
+        <p class="mt-1 text-xs text-slate-400">Marker indicates the minimum investment level to reach ~80% coverage under this proxy model.</p>
+      </div>
+    </section>
+
+    <!-- KPI cards -->
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-gradient-to-br from-sky-50 to-white border border-sky-200 rounded-xl shadow p-4">
+        <div class="text-sm text-sky-700/80">Demand (TWh/y)</div>
+        <div class="text-2xl font-bold" id="demandKpi">70.32</div>
+        <div class="text-xs text-slate-500 mt-1">20y high uptake (proxy)</div>
+      </div>
+      <div class="bg-gradient-to-br from-emerald-50 to-white border border-emerald-200 rounded-xl shadow p-4">
+        <div class="text-sm text-emerald-700/80">Capacity (TWh/y)</div>
+        <div class="text-2xl font-bold" id="capKpi">20.00</div>
+        <div class="text-xs text-slate-500 mt-1">Scaled by investment</div>
+      </div>
+      <div class="bg-gradient-to-br from-indigo-50 to-white border border-indigo-200 rounded-xl shadow p-4">
+        <div class="text-sm text-indigo-700/80">Delivered (TWh/y)</div>
+        <div class="text-2xl font-bold" id="delivKpi">20.00</div>
+        <div class="text-xs text-slate-500 mt-1">min(demand, capacity)</div>
+      </div>
+      <div class="bg-gradient-to-br from-fuchsia-50 to-white border border-fuchsia-200 rounded-xl shadow p-4">
+        <div class="text-sm text-fuchsia-700/80">Coverage</div>
+        <div class="text-2xl font-bold" id="covKpi">28.4%</div>
+        <div class="text-xs text-slate-500 mt-1">Unmet: <span id="unmetKpi">50.32</span> TWh/y</div>
+      </div>
+    </section>
+
+    <!-- Network + Needs -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="bg-white rounded-xl shadow p-4">
+        <div class="font-semibold mb-1">Network diagram (where investment is needed)</div>
+        <div class="text-xs text-slate-500 mb-3">Solid links = corridors; dashed purple = missing/needed pipelines (proxy). Labels show +allocated / total capacity.</div>
+        <svg id="networkSvg" viewBox="0 0 640 320" class="w-full rounded border bg-slate-50"></svg>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-4">
+        <div class="font-semibold mb-1">Investment need (ranked, proxy)</div>
+        <div class="text-xs text-slate-500 mb-3">Shortfall = demand − capacity for each corridor/link (current strategy & investment).</div>
+        <div class="overflow-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b text-left text-slate-600">
+                <th class="py-2 pr-2">Asset</th>
+                <th class="py-2 pr-2">Shortfall (TWh)</th>
+                <th class="py-2 pr-2">Status</th>
+              </tr>
+            </thead>
+            <tbody id="needsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="bg-white rounded-xl shadow p-4">
+        <div class="font-semibold mb-3">System balance (TWh/y)</div>
+        <canvas id="systemChart" height="280"></canvas>
+      </div>
+      <div class="bg-white rounded-xl shadow p-4">
+        <div class="font-semibold mb-1">Corridor utilisation</div>
+        <div class="text-xs text-slate-500 mb-3">Colour-coded (Healthy / Constrained / Critical)</div>
+        <canvas id="utilChart" height="280"></canvas>
+        <div class="mt-2 flex gap-2 text-xs">
+          <span class="px-2 py-1 rounded bg-emerald-100 text-emerald-800">Healthy &lt; 0.6</span>
+          <span class="px-2 py-1 rounded bg-amber-100 text-amber-800">Constrained 0.6–0.9</span>
+          <span class="px-2 py-1 rounded bg-red-100 text-red-700">Critical ≥ 0.9</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Status banner -->
+    <section id="statusBanner" class="rounded-xl shadow text-white p-4 bg-gradient-to-r from-red-500 to-orange-500">
+      <div class="text-lg font-bold" id="statusTitle">System Status: Critically Constrained</div>
+      <div class="text-sm" id="statusSubtitle">Coverage 28.4% — unmet 50.32 TWh/y</div>
+      <div class="text-xs opacity-90 mt-1">Proxy model: total capacity scales linearly; allocation strategy determines where it lands.</div>
+    </section>
+  </div>
+
+<script>
+  // ---------- Model constants (proxy) ----------
+  const baseDemand = 70.32;            // TWh/y
+  const baseCapacityAt1x = 20.0;       // TWh/y
+  const baseInvestmentGBPbnAt1x = 2.0; // £bn
+  const readinessTarget = 0.8;         // 80% coverage target
+
+  const nodes = {
+    Humber:   { x: 140, y: 70 },
+    Teesside: { x: 360, y: 140 },
+    Yorkshire:{ x: 190, y: 250 },
+    Tyneside: { x: 520, y: 70 },
+  };
+
+  const suggestedLinks = [
+    { id: "M1", name:"Teesside ↔ Tyneside", from:"Teesside", to:"Tyneside", reason:"Connect northern demand; reduce isolation", targetTWh: 9.0 },
+    { id: "M2", name:"Yorkshire ↔ Tyneside", from:"Yorkshire", to:"Tyneside", reason:"Redundancy & load balancing", targetTWh: 6.0 },
+  ];
+
+  const baseCorridorsAt1x = [
+    { id:"C1", name:"Humber ↔ Teesside", from:"Humber", to:"Teesside", baseCapacity:6.0, demand:37.2 },
+    { id:"C2", name:"Teesside ↔ Yorkshire", from:"Teesside", to:"Yorkshire", baseCapacity:3.0, demand:36.0 },
+    { id:"C3", name:"Humber ↔ Yorkshire", from:"Humber", to:"Yorkshire", baseCapacity:3.0, demand:37.68 },
+  ];
+
+  const strategies = [
+    { key:"balanced",      label:"Balanced" },
+    { key:"spread",        label:"Spread evenly" },
+    { key:"bottleneck1",   label:"Focus top bottleneck" },
+    { key:"bottleneck2",   label:"Focus top 2" },
+    { key:"missing_first", label:"Missing links first" },
+  ];
+
+  // ---------- UI state ----------
+  let investmentLevel = 1.0;
+  let allocationStrategy = "balanced";
+
+  // ---------- Helpers ----------
+  const fmtPct = (x) => (x*100).toFixed(1) + "%";
+
+  function statusForUtil(util){
+    if (util >= 0.9) return { label:"Critical",   colour:"#ef4444", badgeClass:"bg-red-100 text-red-700" };
+    if (util >= 0.6) return { label:"Constrained",colour:"#f59e0b", badgeClass:"bg-amber-100 text-amber-800" };
+    return             { label:"Healthy",    colour:"#22c55e", badgeClass:"bg-emerald-100 text-emerald-800" };
+  }
+
+  function deliveryWindowForInv(x){
+    if (x <= 1.0) return "10–15 years";
+    if (x <= 2.0) return "7–10 years";
+    if (x <= 3.0) return "5–7 years";
+    if (x <= 4.0) return "3–5 years";
+    return "2–4 years";
+  }
+
+  function snapToStep(x, step=0.5){
+    return Math.round(x/step)*step;
+  }
+
+  // ---------- Allocation model ----------
+  function computeModel(){
+    const totalCapacity = baseCapacityAt1x * investmentLevel;
+    const incrementalCapacity = Math.max(0, totalCapacity - baseCapacityAt1x);
+
+    // baseline shortfalls to find bottlenecks
+    const baseline = baseCorridorsAt1x.map(c => ({ id:c.id, shortfall: Math.max(0, c.demand - c.baseCapacity) }))
+                                      .sort((a,b)=>b.shortfall-a.shortfall);
+    const top1 = baseline[0]?.id;
+    const top2 = new Set(baseline.slice(0,2).map(x=>x.id));
+
+    // init assets
+    const corridors = baseCorridorsAt1x.map(c => ({...c, capacity:c.baseCapacity, allocatedInc:0}));
+    const missing = suggestedLinks.map(l => ({...l, capacity:0, allocatedInc:0, demand:l.targetTWh}));
+
+    // weights
+    const weights = new Map();
+    const setW = (k,w)=>weights.set(k, Math.max(0,w));
+
+    if (allocationStrategy==="spread"){
+      corridors.forEach(c=>setW(c.id,1));
+      missing.forEach(m=>setW(m.id,0));
+    } else if (allocationStrategy==="bottleneck1"){
+      corridors.forEach(c=>setW(c.id, c.id===top1?1:0));
+      missing.forEach(m=>setW(m.id,0));
+    } else if (allocationStrategy==="bottleneck2"){
+      corridors.forEach(c=>setW(c.id, top2.has(c.id)?1:0));
+      missing.forEach(m=>setW(m.id,0));
+    } else if (allocationStrategy==="missing_first"){
+      missing.forEach(m=>setW(m.id,1));
+      corridors.forEach(c=>setW(c.id, c.id===top1?0.5:0.2));
+    } else { // balanced
+      corridors.forEach(c=>setW(c.id, top2.has(c.id)?0.7:0.15));
+      missing.forEach(m=>setW(m.id,0.3));
+    }
+
+    const totalW = Array.from(weights.values()).reduce((s,w)=>s+w,0) || 1;
+
+    function allocateTo(key, amount){
+      const c = corridors.find(x=>x.id===key);
+      if (c){ c.allocatedInc += amount; c.capacity += amount; return; }
+      const m = missing.find(x=>x.id===key);
+      if (m){ m.allocatedInc += amount; m.capacity += amount; }
+    }
+
+    for (const [k,w] of weights.entries()){
+      allocateTo(k, incrementalCapacity*(w/totalW));
+    }
+
+    // compute util + status
+    corridors.forEach(c=>{
+      c.utilisation = c.capacity>0 ? (c.demand/c.capacity) : 99;
+      c.status = statusForUtil(c.utilisation);
+    });
+    missing.forEach(m=>{
+      m.utilisation = m.capacity>0 ? (m.demand/m.capacity) : 99;
+      m.status = statusForUtil(m.utilisation);
+    });
+
+    // system delivered/unmet
+    const delivered = Math.min(baseDemand, totalCapacity);
+    const unmet = Math.max(0, baseDemand - delivered);
+    const coverage = delivered / baseDemand;
+
+    // investment needs list
+    const needs = [...corridors, ...missing].map(x=>({
+      id:x.id, name:x.name, from:x.from, to:x.to,
+      shortfallTWh: Math.max(0, (x.demand||0)-(x.capacity||0)),
+      status: x.status
+    })).sort((a,b)=>b.shortfallTWh-a.shortfallTWh);
+
+    return { totalCapacity, incrementalCapacity, delivered, unmet, coverage, corridors, missing, needs };
+  }
+
+  // ---------- Charts ----------
+  let systemChart, utilChart;
+
+  function initCharts(){
+    const sysCtx = document.getElementById("systemChart");
+    systemChart = new Chart(sysCtx, {
+      type: "bar",
+      data: { labels:["System"], datasets: [] },
+      options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
+    });
+
+    const utilCtx = document.getElementById("utilChart");
+    utilChart = new Chart(utilCtx, {
+      type: "bar",
+      data: { labels:[], datasets:[] },
+      options: {
+        indexAxis: "y",
+        responsive:true,
+        maintainAspectRatio:false,
+        scales:{ x:{ beginAtZero:true } },
+        plugins:{ legend:{ display:false } }
+      }
+    });
+  }
+
+  function updateCharts(model){
+    systemChart.data.labels = ["System"];
+    systemChart.data.datasets = [
+      { label:"Demand",   data:[baseDemand],            backgroundColor:"#3b82f6" },
+      { label:"Capacity", data:[model.totalCapacity],   backgroundColor:"#22c55e" },
+      { label:"Delivered",data:[model.delivered],       backgroundColor:"#6366f1" },
+      { label:"Unmet",    data:[model.unmet],           backgroundColor:"#ef4444" },
+    ];
+    systemChart.update();
+
+    utilChart.data.labels = model.corridors.map(c=>c.name);
+    utilChart.data.datasets = [{
+      label:"Utilisation",
+      data: model.corridors.map(c=>Number(c.utilisation.toFixed(2))),
+      backgroundColor: model.corridors.map(c=>c.status.colour),
+      borderRadius: 6,
+    }];
+    utilChart.update();
+  }
+
+  // ---------- Network diagram ----------
+  function renderNetwork(model){
+    const svg = document.getElementById("networkSvg");
+    svg.innerHTML = "";
+
+    // helper for SVG elements
+    const el = (name, attrs={})=>{
+      const e = document.createElementNS("http://www.w3.org/2000/svg", name);
+      Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));
+      return e;
+    };
+
+    // existing pairs
+    const existingPairs = new Set();
+    model.corridors.forEach(c=>{
+      existingPairs.add(`${c.from}|${c.to}`);
+      existingPairs.add(`${c.to}|${c.from}`);
+    });
+
+    // draw corridors
+    model.corridors.forEach(c=>{
+      const a = nodes[c.from], b = nodes[c.to];
+      const width = Math.max(2, Math.min(10, c.capacity/2));
+      svg.appendChild(el("line", {
+        x1:a.x, y1:a.y, x2:b.x, y2:b.y,
+        stroke:c.status.colour, "stroke-width":width,
+        "stroke-linecap":"round", opacity:"0.9"
+      }));
+
+      const mx = (a.x+b.x)/2, my=(a.y+b.y)/2;
+      svg.appendChild(el("rect", { x:mx-56, y:my-12, width:112, height:20, rx:8, fill:"#111827", opacity:"0.85" }));
+      const t = el("text", { x:mx, y:my+3, "text-anchor":"middle", "font-size":"10", fill:"white" });
+      t.textContent = `+${c.allocatedInc.toFixed(1)} / ${c.capacity.toFixed(1)} TWh`;
+      svg.appendChild(t);
+    });
+
+    // draw missing links (dashed if no allocation, solid if allocated)
+    model.missing.forEach(m=>{
+      const exists = existingPairs.has(`${m.from}|${m.to}`);
+      if (exists) return;
+
+      const a = nodes[m.from], b = nodes[m.to];
+      const built = m.capacity > 0.2;
+
+      svg.appendChild(el("line", {
+        x1:a.x, y1:a.y, x2:b.x, y2:b.y,
+        stroke:"#7c3aed",
+        "stroke-width": built ? 3 : 2,
+        "stroke-dasharray": built ? "0" : "6 6",
+        opacity:"0.9"
+      }));
+
+      const mx = (a.x+b.x)/2, my=(a.y+b.y)/2;
+      svg.appendChild(el("rect", { x:mx-72, y:my-12, width:144, height:20, rx:8, fill:"#7c3aed", opacity:"0.85" }));
+      const t = el("text", { x:mx, y:my+3, "text-anchor":"middle", "font-size":"10", fill:"white" });
+      t.textContent = built ? `Built ${m.capacity.toFixed(1)} TWh` : `Missing ~${m.targetTWh.toFixed(0)} TWh`;
+      svg.appendChild(t);
+    });
+
+    // draw nodes
+    Object.entries(nodes).forEach(([name,pos])=>{
+      svg.appendChild(el("circle", { cx:pos.x, cy:pos.y, r:20, fill:"#111827" }));
+      svg.appendChild(el("circle", { cx:pos.x, cy:pos.y, r:22, fill:"transparent", stroke:"#334155" }));
+      const t = el("text", { x:pos.x, y:pos.y+4, "text-anchor":"middle", "font-size":"10", fill:"white" });
+      t.textContent = name;
+      svg.appendChild(t);
+    });
+
+    // legend
+    const legend = el("g");
+    legend.appendChild(el("rect",{ x:12,y:12,width:250,height:74,rx:10,fill:"white",opacity:"0.92" }));
+    const lt = el("text",{ x:24,y:32,"font-size":"10",fill:"#111827" }); lt.textContent="Legend"; legend.appendChild(lt);
+    legend.appendChild(el("line",{ x1:24,y1:46,x2:58,y2:46,stroke:"#ef4444","stroke-width":"4" }));
+    const l1 = el("text",{ x:66,y:49,"font-size":"10",fill:"#111827" }); l1.textContent="Critical corridor"; legend.appendChild(l1);
+    legend.appendChild(el("line",{ x1:24,y1:66,x2:58,y2:66,stroke:"#7c3aed","stroke-width":"2","stroke-dasharray":"6 6" }));
+    const l2 = el("text",{ x:66,y:69,"font-size":"10",fill:"#111827" }); l2.textContent="Missing link (investment)"; legend.appendChild(l2);
+    svg.appendChild(legend);
+  }
+
+  // ---------- Needs table ----------
+  function renderNeedsTable(model){
+    const tbody = document.getElementById("needsTable");
+    tbody.innerHTML = "";
+    model.needs.slice(0,6).forEach(r=>{
+      const tr = document.createElement("tr");
+      tr.className = "border-b";
+      tr.innerHTML = `
+        <td class="py-2 pr-2">${r.name}</td>
+        <td class="py-2 pr-2">${r.shortfallTWh.toFixed(2)}</td>
+        <td class="py-2 pr-2">
+          <span class="px-2 py-1 rounded text-xs font-medium ${r.status.badgeClass}">${r.status.label}</span>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ---------- Update UI ----------
+  function updateUI(){
+    const model = computeModel();
+
+    // break-even marker (80% target)
+    const breakEvenExact = (baseDemand * readinessTarget) / baseCapacityAt1x;
+    const breakEven = Math.min(5, Math.max(1, snapToStep(breakEvenExact, 0.5)));
+    const breakEvenPct = ((breakEven - 1) / (5 - 1)) * 100;
+    document.getElementById("breakevenValue").textContent = breakEven.toFixed(1) + "×";
+    document.getElementById("breakevenMarker").style.left = `calc(${breakEvenPct}% - 1px)`;
+
+    // investment / delivery
+    const invGBPbn = baseInvestmentGBPbnAt1x * investmentLevel;
+    document.getElementById("invGBP").textContent = "£" + invGBPbn.toFixed(1) + "bn";
+    document.getElementById("deliveryWindow").textContent = deliveryWindowForInv(investmentLevel);
+
+    // efficiency
+    const avgEff = model.delivered > 0 ? (invGBPbn*1000)/model.delivered : 0; // £m/TWh
+    document.getElementById("avgEff").textContent = "£" + avgEff.toFixed(0) + "m/TWh";
+
+    const deliveredAt1x = Math.min(baseDemand, baseCapacityAt1x);
+    const incDelivered = Math.max(0, model.delivered - deliveredAt1x);
+    const incSpend = Math.max(0, (invGBPbn - baseInvestmentGBPbnAt1x) * 1000);
+    document.getElementById("margEff").textContent = incDelivered>0 ? ("£"+(incSpend/incDelivered).toFixed(0)+"m/TWh") : "—";
+
+    // KPIs
+    document.getElementById("multiplier").textContent = investmentLevel.toFixed(1) + "×";
+    document.getElementById("incCap").textContent = model.incrementalCapacity.toFixed(1);
+    document.getElementById("coveragePct").textContent = fmtPct(model.coverage);
+    document.getElementById("unmet").textContent = model.unmet.toFixed(1);
+
+    document.getElementById("demandKpi").textContent = baseDemand.toFixed(2);
+    document.getElementById("capKpi").textContent = model.totalCapacity.toFixed(2);
+    document.getElementById("delivKpi").textContent = model.delivered.toFixed(2);
+    document.getElementById("covKpi").textContent = fmtPct(model.coverage);
+    document.getElementById("unmetKpi").textContent = model.unmet.toFixed(2);
+
+    // readiness bar
+    const readinessScore = Math.min(1, model.coverage / readinessTarget);
+    document.getElementById("readinessPct").textContent = fmtPct(readinessScore);
+    document.getElementById("readinessBar").style.width = (readinessScore*100).toFixed(0) + "%";
+
+    // status banner
+    const statusBanner = document.getElementById("statusBanner");
+    const statusTitle = document.getElementById("statusTitle");
+    const statusSubtitle = document.getElementById("statusSubtitle");
+
+    let status = "Healthy", gradient = "from-emerald-500 to-green-600";
+    if (model.coverage < 0.5){ status="Critically Constrained"; gradient="from-red-500 to-orange-500"; }
+    else if (model.coverage < 0.8){ status="Constrained"; gradient="from-amber-500 to-yellow-500"; }
+
+    statusBanner.className = `rounded-xl shadow text-white p-4 bg-gradient-to-r ${gradient}`;
+    statusTitle.textContent = "System Status: " + status;
+    statusSubtitle.textContent = `Coverage ${fmtPct(model.coverage)} — unmet ${model.unmet.toFixed(2)} TWh/y`;
+
+    // charts, network, table
+    updateCharts(model);
+    renderNetwork(model);
+    renderNeedsTable(model);
+  }
+
+  // ---------- Strategy buttons ----------
+  function renderStrategyButtons(){
+    const wrap = document.getElementById("strategyButtons");
+    wrap.innerHTML = "";
+    strategies.forEach(s=>{
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "rounded-full px-3 py-1 text-xs border transition " +
+        (allocationStrategy===s.key ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50");
+      btn.textContent = s.label;
+      btn.onclick = ()=>{ allocationStrategy=s.key; renderStrategyButtons(); updateUI(); };
+      wrap.appendChild(btn);
+    });
+  }
+
+  // ---------- Init ----------
+  document.getElementById("invSlider").addEventListener("input", (e)=>{
+    investmentLevel = Number(e.target.value);
+    updateUI();
+  });
+
+  renderStrategyButtons();
+  initCharts();
+  updateUI();
+</script>
+</body>
+</html>
