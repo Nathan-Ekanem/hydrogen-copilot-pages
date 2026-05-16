@@ -3,14 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>East Coast Hydrogen Network – Decision Dashboard</title>
+<title>Northline Hydrogen Corridor – Decision Dashboard</title>
+
 <style>
   :root{
-    --bg:#0f172a;
-    --panel:#0b1224;
+    --bg1:#0b1224;
+    --bg2:#0f172a;
     --card:#ffffff;
     --text:#0b1224;
     --muted:#64748b;
+
     --blue:#3b82f6;
     --indigo:#6366f1;
     --green:#22c55e;
@@ -19,36 +21,51 @@
     --purple:#7c3aed;
     --slate:#94a3b8;
   }
+
   *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#0b1224,#0f172a);color:#fff;}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    background:linear-gradient(180deg,var(--bg1),var(--bg2));
+    color:#fff;
+  }
   .wrap{max-width:1200px;margin:0 auto;padding:20px;}
   .header{
-    border-radius:18px;padding:18px 18px;
+    border-radius:18px;
+    padding:18px 18px;
     background:linear-gradient(90deg,#3b82f6,#4f46e5,#d946ef);
     box-shadow:0 10px 30px rgba(0,0,0,.25);
   }
   .header h1{margin:0;font-size:22px}
   .header p{margin:6px 0 0;font-size:13px;opacity:.92}
+
   .grid{display:grid;gap:14px}
   @media(min-width:980px){
     .grid.cols-2{grid-template-columns:1fr 1fr}
-    .grid.cols-3{grid-template-columns:1.2fr .8fr .8fr}
+    .grid.cols-3{grid-template-columns:1.1fr .9fr 1fr}
     .grid.cols-4{grid-template-columns:repeat(4,1fr)}
   }
+
   .card{
-    background:rgba(255,255,255,.96); color:var(--text);
-    border-radius:14px; padding:14px;
+    background:rgba(255,255,255,.96);
+    color:var(--text);
+    border-radius:14px;
+    padding:14px;
     box-shadow:0 8px 20px rgba(0,0,0,.18);
   }
   .card h2{margin:0 0 6px;font-size:14px}
   .muted{color:var(--muted);font-size:12px}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .spacer{flex:1}
+
   .pill{
     border:1px solid rgba(15,23,42,.18);
-    background:#fff;color:#0b1224;padding:6px 10px;
-    border-radius:999px;font-size:12px;cursor:pointer;
+    background:#fff;color:#0b1224;
+    padding:6px 10px;border-radius:999px;
+    font-size:12px;cursor:pointer;
   }
   .pill.active{background:#0b1224;color:#fff;border-color:#0b1224}
+
   .kpis{display:grid;gap:12px}
   @media(min-width:980px){.kpis{grid-template-columns:repeat(4,1fr)}}
   .kpi{
@@ -59,51 +76,62 @@
   .kpi .label{font-size:12px;color:#334155}
   .kpi .value{font-size:22px;font-weight:900;margin-top:4px}
   .kpi .sub{font-size:11px;color:var(--muted);margin-top:6px}
+
   .bar{height:8px;border-radius:999px;background:#e2e8f0;overflow:hidden}
   .bar > div{height:100%;background:linear-gradient(90deg,var(--green),#16a34a)}
+
   input[type=range]{width:100%}
-  input[type=number]{width:90px;padding:6px;border-radius:8px;border:1px solid #cbd5e1}
+  input[type=number]{width:92px;padding:6px;border-radius:8px;border:1px solid #cbd5e1}
   select{padding:6px;border-radius:8px;border:1px solid #cbd5e1}
+
   button{
     border:none;border-radius:10px;padding:10px 12px;
-    cursor:pointer;font-weight:700;font-size:12px
+    cursor:pointer;font-weight:800;font-size:12px
   }
   .btn-primary{background:#2563eb;color:#fff}
   .btn-ghost{background:#eef2ff;color:#1e3a8a}
   .btn-warn{background:#fff7ed;color:#9a3412}
   .btn-dark{background:#0b1224;color:#fff}
+
   table{width:100%;border-collapse:collapse;font-size:12px}
   th,td{padding:8px 6px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}
-  th{color:#475569;font-weight:800}
-  .badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:800}
+  th{color:#475569;font-weight:900}
+
+  .badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:900}
   .b-ok{background:#dcfce7;color:#065f46}
   .b-cons{background:#fef3c7;color:#92400e}
   .b-crit{background:#fee2e2;color:#b91c1c}
+
   .chat{
-    height:220px;overflow:auto;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px
+    height:220px;overflow:auto;background:#f8fafc;
+    border:1px solid #e2e8f0;border-radius:12px;padding:10px
   }
   .bubble{padding:10px;border-radius:12px;margin:8px 0;font-size:12px;white-space:pre-wrap}
   .user{background:#dbeafe;margin-left:auto;max-width:95%}
   .assistant{background:#fff;border:1px solid #e2e8f0;max-width:95%}
+
   .svgWrap{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden}
-  .foot{font-size:11px;color:#cbd5e1;opacity:.85;margin-top:10px}
+  .foot{font-size:11px;color:#cbd5e1;opacity:.86;margin-top:10px}
+
+  /* Executive mode hides technical panels */
+  .exec-hide{display:block}
+  .executive .exec-hide{display:none}
 </style>
 </head>
 
 <body>
-<div class="wrap">
+<div class="wrap" id="appRoot">
   <div class="header">
-    <h1>East Coast Hydrogen Network – Copilot-Style Decision Dashboard</h1>
-    <p>Industry-style planning tool for the East Coast spine (Teesside → Yorkshire → Humber → East Midlands) with network constraints, investment planning, and AI-like decision support.</p>
+    <h1 id="titleText">Northline Hydrogen Corridor – Copilot Decision Dashboard</h1>
+    <p id="subtitleText">Fictitious programme naming for external presentation. Toggle back later with one switch.</p>
   </div>
 
-  <!-- Controls + KPIs -->
+  <!-- Controls -->
   <div class="card" style="margin-top:14px;">
-    <h2>Scenario, investment & controls</h2>
-    <div class="muted">This is a screening model. Topology reflects the publicly described East Coast corridor routing. 【1-f7d65c】【2-78a37b】</div>
+    <h2>Scenario, investment & planning controls</h2>
+    <div class="muted">Multi-year planning (2030–2040), investment allocation, outages, demand shock, and Copilot-style insight.</div>
 
     <div class="grid cols-3" style="margin-top:10px;">
-      <!-- Left: scenario + budget -->
       <div>
         <div class="row" style="justify-content:space-between;">
           <div><b>Scenario</b></div>
@@ -112,6 +140,12 @@
 
         <div style="margin-top:10px;">
           <div class="row" style="justify-content:space-between;">
+            <div><b>Year</b>: <span id="yearLabel">2030</span></div>
+            <div class="muted">Multi-year ramp</div>
+          </div>
+          <input id="yearSlider" type="range" min="2030" max="2040" step="1" value="2030" />
+
+          <div class="row" style="justify-content:space-between;margin-top:12px;">
             <div><b>Investment multiplier</b>: <span id="invMultLabel">1.0×</span></div>
             <div style="text-align:right;">
               <div class="muted">Budget proxy</div>
@@ -121,9 +155,10 @@
           <input id="invSlider" type="range" min="1" max="5" step="0.5" value="1" />
           <div class="row" style="justify-content:space-between;margin-top:6px;">
             <div class="muted">Target: 80% coverage</div>
-            <div class="muted">Planned delivery window (proxy): <b id="deliveryWindow">10–15 years</b></div>
+            <div class="muted">Delivery window (proxy): <b id="deliveryWindow">10–15 years</b></div>
           </div>
-          <div class="muted" style="margin-top:8px;">Readiness to 80% target: <b id="readinessPct">0%</b></div>
+
+          <div class="muted" style="margin-top:8px;">Readiness to 80%: <b id="readinessPct">0%</b></div>
           <div class="bar"><div id="readinessBar" style="width:0%"></div></div>
         </div>
 
@@ -132,17 +167,25 @@
           <div class="row" id="strategyRow"></div>
         </div>
 
-        <div style="margin-top:12px;" class="row">
-          <label class="muted"><input id="toggleDemandShock" type="checkbox" /> Demand shock (+20% Yorkshire, +10% East Midlands)</label>
+        <div class="row" style="margin-top:12px;">
+          <label class="muted"><input id="toggleDemandShock" type="checkbox" /> Demand shock</label>
           <label class="muted"><input id="toggleOutage" type="checkbox" /> Outage mode</label>
           <select id="outageSelect" disabled></select>
         </div>
+
+        <!-- 5 features: Story + Executive toggle -->
+        <div class="row" style="margin-top:12px;">
+          <button class="btn-primary" id="storyBtn">▶ Play Scenario Story</button>
+          <button class="btn-dark" id="execBtn">🧑‍💼 Executive Mode: OFF</button>
+        </div>
+        <div class="muted" style="margin-top:6px;">
+          Story mode animates investment and highlights shifting constraints.
+        </div>
       </div>
 
-      <!-- Middle: node sliders -->
-      <div>
-        <b>Node supply/demand sliders (TWh/y)</b>
-        <div class="muted">Adjust local supply and demand to simulate industrial growth or project delivery.</div>
+      <div class="exec-hide">
+        <b>Node sliders (TWh/y)</b>
+        <div class="muted">Tune supply/demand for planning realism.</div>
         <div id="nodeSliders" style="margin-top:10px;"></div>
         <div class="row" style="margin-top:10px;">
           <button class="btn-ghost" id="resetNodesBtn">Reset to scenario</button>
@@ -150,19 +193,26 @@
         </div>
       </div>
 
-      <!-- Right: Decision Summary -->
+      <!-- Decision summary -->
       <div>
         <b>Decision summary</b>
-        <div class="muted">Auto-updates based on system state, bottlenecks, and investable actions.</div>
+        <div class="muted">Auto-updates as conditions change.</div>
         <div class="card" style="margin-top:10px;background:linear-gradient(135deg,#f8fafc,#fff);border:1px solid #e2e8f0;">
           <div id="decisionStatus" style="font-weight:900;font-size:14px;">—</div>
           <div id="decisionBody" style="margin-top:8px;font-size:12px;white-space:pre-wrap;"></div>
+        </div>
+
+        <!-- 5 features: AI Explanation Panel -->
+        <div class="card" style="margin-top:10px;background:linear-gradient(135deg,#eff6ff,#fff);border:1px solid #bfdbfe;">
+          <div style="font-weight:900;">🧠 AI Explanation</div>
+          <div class="muted">Short narrative insight generated from the live model state.</div>
+          <div id="aiExplain" style="margin-top:8px;font-size:12px;white-space:pre-wrap;"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- KPI row -->
+  <!-- KPIs -->
   <div class="kpis" style="margin-top:14px;">
     <div class="kpi">
       <div class="label">Total Demand (TWh/y)</div>
@@ -186,11 +236,13 @@
     </div>
   </div>
 
-  <!-- Network diagram + investment needs -->
+  <!-- Network diagram + Investment needs -->
   <div class="grid cols-2" style="margin-top:14px;">
     <div class="card">
-      <h2>Network diagram (pipelines + missing links)</h2>
-      <div class="muted">Solid lines = planned/available corridors; dashed purple = candidate new pipelines. Colour indicates utilisation.</div>
+      <h2>Network diagram (available pipelines + missing links)</h2>
+      <div class="muted">Solid lines = existing corridors; dashed purple = candidate new pipelines. Colour indicates utilisation.</div>
+
+      <!-- 5 features: Map overlay (stylised region basemap) -->
       <div class="svgWrap" style="margin-top:10px;">
         <svg id="netSvg" viewBox="0 0 640 320" width="100%" height="320"></svg>
       </div>
@@ -200,19 +252,15 @@
         <span class="badge b-cons">Constrained 70–90%</span>
         <span class="badge b-crit">Critical ≥ 90%</span>
       </div>
-
-      <div class="muted" style="margin-top:8px;">
-        Candidate links can be funded from the same budget. Build decisions affect coverage and bottlenecks.
-      </div>
     </div>
 
-    <div class="card">
-      <h2>Investment needs (corridor upgrades + new builds)</h2>
-      <div class="muted">Proxy £ cost to reduce utilisation and/or unlock new capacity (screening model).</div>
+    <div class="card exec-hide">
+      <h2>Investment needs (upgrades + new builds)</h2>
+      <div class="muted">Proxy cost model (screening): upgrades aim to reduce utilisation under 80%.</div>
 
       <div class="row" style="margin-top:10px;justify-content:space-between;">
-        <div class="muted">Cost model (proxy)</div>
-        <div class="muted">£ per (TWh capacity added): <b id="costPerTwh">0.08</b>bn</div>
+        <div class="muted">£ per added TWh capacity (bn): <b id="costPerTwh">0.08</b></div>
+        <div class="muted">Budget proxy: £<b id="budgetBn2">2.0</b>bn</div>
       </div>
 
       <table style="margin-top:8px;">
@@ -222,39 +270,34 @@
             <th>Util</th>
             <th>Needed to &lt;80%</th>
             <th>Cost (bn)</th>
-            <th>Action</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody id="invTable"></tbody>
       </table>
-
-      <div class="row" style="margin-top:10px;justify-content:space-between;">
-        <div class="muted">Allocated spend: £<b id="spentBn">0.0</b>bn</div>
-        <div class="muted">Remaining: £<b id="remainBn">0.0</b>bn</div>
-      </div>
     </div>
   </div>
 
-  <!-- System chart + corridor utilisation list -->
+  <!-- System chart + corridor list -->
   <div class="grid cols-2" style="margin-top:14px;">
     <div class="card">
       <h2>System balance (TWh/y)</h2>
-      <div class="muted">Simple bar chart drawn in canvas (no external libraries).</div>
+      <div class="muted">Demand vs capacity vs delivered vs unmet.</div>
       <canvas id="sysCanvas" height="240" style="width:100%;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;"></canvas>
     </div>
 
-    <div class="card">
-      <h2>Corridor utilisation</h2>
-      <div class="muted">Ranked by congestion. Bottlenecks drive recommendations.</div>
+    <div class="card exec-hide">
+      <h2>Corridor utilisation (ranked)</h2>
+      <div class="muted">Bottlenecks drive investment priorities.</div>
       <div id="corridorList" style="margin-top:10px;"></div>
     </div>
   </div>
 
-  <!-- Copilot-style assistant -->
+  <!-- Copilot assistant -->
   <div class="grid cols-2" style="margin-top:14px;">
     <div class="card">
       <h2>Copilot (decision assistant)</h2>
-      <div class="muted">Local Copilot: uses the model’s latest state to explain bottlenecks, recommend strategy, and prioritise upgrades.</div>
+      <div class="muted">Local Copilot: no keys, works on GitHub Pages. Ask about bottlenecks & investment priorities.</div>
 
       <div class="chat" id="chatBox"></div>
 
@@ -272,36 +315,161 @@
     </div>
 
     <div class="card">
-      <h2>What else you can add next (roadmap)</h2>
-      <div class="muted">This build already includes: visual network, missing links, investments, decision summary, what‑ifs, CSV export, and Copilot UX.</div>
-      <ul style="margin-top:10px;color:#0b1224;font-size:13px;line-height:1.5;">
-        <li><b>Real data ingestion:</b> replace proxy node demand/supply with your scenario tables and publish updates.</li>
-        <li><b>Time dimension:</b> add 2030/2035/2040 time steps and show capacity ramp vs demand ramp.</li>
-        <li><b>Storage & balancing:</b> add a storage node and intra-day balancing logic (peak shaving).</li>
-        <li><b>Geographic map:</b> switch SVG to a UK basemap for stakeholder demos.</li>
-        <li><b>LLM Copilot backend:</b> add Azure Function proxy for richer natural language (keys never in browser).</li>
-      </ul>
-      <div class="muted">If you want, we can do any of these next — but this version is already “highest level” for a single-file web app.</div>
+      <h2>Candidate pipeline builds</h2>
+      <div class="muted">Toggle new pipelines to unlock new capacity paths.</div>
+      <div id="buildToggles" style="margin-top:10px;"></div>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn-primary" id="applyBuildsBtn">Apply changes</button>
+        <button class="btn-ghost" id="resetBuildsBtn">Reset builds</button>
+      </div>
     </div>
   </div>
 
   <div class="foot">
-    Built as a static web app for GitHub Pages. Topology aligns with the publicly described East Coast corridor routing for Project Union: East Coast. 【1-f7d65c】【2-78a37b】
+    Confidential presentation mode enabled: fictitious naming only. Set CONFIDENTIAL_MODE=false in the script to revert later.
   </div>
 </div>
 
 <script>
-/* ------------------------------------------------------------
-   EAST COAST HYDROGEN NETWORK — HIGH-LEVEL DECISION TOOL
-   - Network constraints via Edmonds–Karp max flow
-   - Investment allocation (budget proxy) + upgrade costs
-   - Missing link builds (candidate pipelines)
-   - Decision Summary + Copilot-style local assistant
-------------------------------------------------------------- */
+/* ============================================================
+   CONFIDENTIAL / REAL NAMING SWITCH
+   - Set true for fictitious external presentation
+   - Set false to switch back later
+============================================================ */
+const CONFIDENTIAL_MODE = true;
 
-// ---------- Utility ----------
+/* ============================================================
+   NAMING MAPS
+============================================================ */
+const REAL_NAMES = {
+  programme: "East Coast Hydrogen",
+  subtitle: "Teesside → Yorkshire → Humber → East Midlands",
+  nodes: {
+    A:"Teesside", B:"Yorkshire", C:"Humber", D:"East Midlands"
+  },
+  corridors: {
+    C1:"Teesside → Yorkshire",
+    C2:"Yorkshire → Humber",
+    C3:"Humber → East Midlands",
+    NL1:"Teesside → Humber (new link)",
+    NL2:"Yorkshire → East Midlands (new link)"
+  }
+};
+
+const FAKE_NAMES = {
+  programme: "Northline Hydrogen Corridor",
+  subtitle: "Harborhaven → Northvale → Estuarygate → Midshire",
+  nodes: {
+    A:"Harborhaven", B:"Northvale", C:"Estuarygate", D:"Midshire"
+  },
+  corridors: {
+    C1:"Northline Segment A (Harborhaven → Northvale)",
+    C2:"Northline Segment B (Northvale → Estuarygate)",
+    C3:"Northline Segment C (Estuarygate → Midshire)",
+    NL1:"CrossLink‑1 (Harborhaven → Estuarygate)",
+    NL2:"CrossLink‑2 (Northvale → Midshire)"
+  }
+};
+
+const N = CONFIDENTIAL_MODE ? FAKE_NAMES : REAL_NAMES;
+
+document.getElementById("titleText").textContent = `${N.programme} – Copilot Decision Dashboard`;
+document.getElementById("subtitleText").textContent = N.subtitle;
+
+/* ============================================================
+   BASE MODEL CONFIG (network IDs stay constant; labels change)
+============================================================ */
+const COST_PER_TWH_BN = 0.08;
+document.getElementById("costPerTwh").textContent = COST_PER_TWH_BN.toFixed(2);
+
+// Nodes (fixed positions for SVG)
+const NODES = {
+  A:{ x:100, y:90, name: N.nodes.A },
+  B:{ x:270, y:250, name: N.nodes.B },
+  C:{ x:430, y:120, name: N.nodes.C },
+  D:{ x:560, y:250, name: N.nodes.D }
+};
+
+// Corridors (existing)
+const BASE_EDGES = [
+  { id:"C1", name:N.corridors.C1, from:"A", to:"B", cap:18, type:"corridor" },
+  { id:"C2", name:N.corridors.C2, from:"B", to:"C", cap:18, type:"corridor" },
+  { id:"C3", name:N.corridors.C3, from:"C", to:"D", cap:14, type:"corridor" }
+];
+
+// Candidate links (missing pipelines)
+const CANDIDATES = [
+  { id:"NL1", name:N.corridors.NL1, from:"A", to:"C", cap:0, type:"newlink", buildCap:10 },
+  { id:"NL2", name:N.corridors.NL2, from:"B", to:"D", cap:0, type:"newlink", buildCap:8 }
+];
+
+// Scenarios (proxy presets)
+const SCENARIOS = [
+  {
+    key:"baseline",
+    label:"Baseline build-out",
+    supply:{ A:28, C:22 },
+    demand:{ B:20, C:25, D:18 },
+    edges:{ C1:18, C2:18, C3:14 },
+    demandGrowthPerYear: 0.02,
+    supplyGrowthPerYear: 0.01
+  },
+  {
+    key:"high_demand",
+    label:"High demand growth",
+    supply:{ A:30, C:24 },
+    demand:{ B:26, C:30, D:24 },
+    edges:{ C1:18, C2:18, C3:14 },
+    demandGrowthPerYear: 0.03,
+    supplyGrowthPerYear: 0.01
+  },
+  {
+    key:"expansion",
+    label:"2035 expansion-ready",
+    supply:{ A:36, C:30 },
+    demand:{ B:24, C:30, D:24 },
+    edges:{ C1:24, C2:24, C3:20 },
+    demandGrowthPerYear: 0.02,
+    supplyGrowthPerYear: 0.02
+  },
+  {
+    key:"stress",
+    label:"Stress test (shock + outage)",
+    supply:{ A:28, C:22 },
+    demand:{ B:24, C:28, D:22 },
+    edges:{ C1:18, C2:18, C3:14 },
+    demandGrowthPerYear: 0.03,
+    supplyGrowthPerYear: 0.00
+  }
+];
+
+const STRATEGIES = [
+  { key:"balanced", label:"Balanced" },
+  { key:"bottleneck", label:"Bottleneck-first" },
+  { key:"backbone", label:"Backbone-first" },
+  { key:"missing_first", label:"Missing-links-first" }
+];
+
+// App State
+let currentScenarioKey = "baseline";
+let strategy = "balanced";
+let investmentMult = 1.0;
+let year = 2030;
+
+let nodeSupply = {};
+let nodeDemand = {};
+let corridorCaps = {};  // base caps per corridor for current scenario
+let built = { NL1:false, NL2:false };
+
+let lastSnapshot = null;
+let storyRunning = false;
+let executiveMode = false;
+
+/* ============================================================
+   HELPERS
+============================================================ */
 const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
-const pct = (x)=> (x*100).toFixed(1)+"%";
+const pct = (x)=> (x*100).toFixed(1) + "%";
 
 function statusFromUtil(u){
   if(u >= 0.90) return {label:"Critical", badge:"b-crit", colour:"#ef4444"};
@@ -317,93 +485,19 @@ function deliveryWindowFor(mult){
   return "2–4 years";
 }
 
-// ---------- Scenarios (proxy presets) ----------
-const SCENARIOS = [
-  {
-    key:"baseline",
-    label:"Baseline (2027–2030 starter)",
-    supply:{ TEES:28, HUMB:22 },
-    demand:{ YORK:20, HUMB:25, EMID:18 },
-    edges:{ PU1:18, PU2:18, PU3:14 }
-  },
-  {
-    key:"high_demand",
-    label:"High demand (industrial growth)",
-    supply:{ TEES:30, HUMB:24 },
-    demand:{ YORK:26, HUMB:30, EMID:24 },
-    edges:{ PU1:18, PU2:18, PU3:14 }
-  },
-  {
-    key:"expansion_2035",
-    label:"2035 expansion (more supply + upgrades)",
-    supply:{ TEES:36, HUMB:30 },
-    demand:{ YORK:24, HUMB:30, EMID:24 },
-    edges:{ PU1:24, PU2:24, PU3:20 }
-  },
-  {
-    key:"stress_test",
-    label:"Stress test (outage + demand shock)",
-    supply:{ TEES:28, HUMB:22 },
-    demand:{ YORK:24, HUMB:28, EMID:22 },
-    edges:{ PU1:18, PU2:18, PU3:14 }
-  }
-];
-
-// ---------- Topology (East Coast spine) ----------
-const NODES = {
-  TEES:{name:"Teesside", x:90, y:80},
-  YORK:{name:"Yorkshire", x:260, y:240},
-  HUMB:{name:"Humber", x:420, y:110},
-  EMID:{name:"East Midlands", x:540, y:250}
-};
-
-const BASE_EDGES = [
-  { id:"PU1", name:"Teesside → Yorkshire", from:"TEES", to:"YORK", cap:18, type:"corridor" },
-  { id:"PU2", name:"Yorkshire → Humber", from:"YORK", to:"HUMB", cap:18, type:"corridor" },
-  { id:"PU3", name:"Humber → East Midlands", from:"HUMB", to:"EMID", cap:14, type:"corridor" }
-];
-
-// Candidate new pipelines (missing links)
-const CANDIDATE_EDGES = [
-  { id:"NL1", name:"Teesside → Humber (new link)", from:"TEES", to:"HUMB", cap:0, type:"newlink", buildCap:10 },
-  { id:"NL2", name:"Yorkshire → East Midlands (new link)", from:"YORK", to:"EMID", cap:0, type:"newlink", buildCap:8 }
-];
-
-// Cost model (proxy): £ per added TWh capacity (bn)
-const COST_PER_TWH_BN = 0.08; // e.g., +10 TWh costs ~£0.8bn (screening proxy)
-document.getElementById("costPerTwh").textContent = COST_PER_TWH_BN.toFixed(2);
-
-// ---------- State ----------
-let currentScenarioKey = "baseline";
-let strategy = "balanced";
-let investmentMult = 1.0;
-
-let nodeSupply = {};
-let nodeDemand = {};
-let edgesState = [];          // corridors + possibly built new links
-let builtLinks = { NL1:false, NL2:false };
-
-let lastSnapshot = null;
-
-// ---------- Strategy options ----------
-const STRATEGIES = [
-  { key:"balanced", label:"Balanced" },
-  { key:"bottleneck", label:"Bottleneck-first" },
-  { key:"backbone", label:"Backbone-first" },
-  { key:"missing_first", label:"Missing-links-first" }
-];
-
-// ---------- UI Setup ----------
+/* ============================================================
+   UI INIT
+============================================================ */
 function initScenarioDropdown(){
   const sel = document.getElementById("scenarioSelect");
-  sel.innerHTML = "";
+  sel.innerHTML="";
   for(const s of SCENARIOS){
-    const opt = document.createElement("option");
-    opt.value = s.key;
-    opt.textContent = s.label;
+    const opt=document.createElement("option");
+    opt.value=s.key;
+    opt.textContent=s.label;
     sel.appendChild(opt);
   }
-  sel.value = currentScenarioKey;
+  sel.value=currentScenarioKey;
   sel.addEventListener("change", ()=>{
     currentScenarioKey = sel.value;
     applyScenario(currentScenarioKey);
@@ -412,56 +506,73 @@ function initScenarioDropdown(){
 }
 
 function initStrategyButtons(){
-  const row = document.getElementById("strategyRow");
-  row.innerHTML = "";
+  const row=document.getElementById("strategyRow");
+  row.innerHTML="";
   for(const s of STRATEGIES){
-    const b = document.createElement("button");
-    b.className = "pill" + (s.key===strategy ? " active":"");
-    b.textContent = s.label;
-    b.onclick = ()=>{
-      strategy = s.key;
-      initStrategyButtons();
-      updateAll();
-    };
+    const b=document.createElement("button");
+    b.className="pill"+(s.key===strategy?" active":"");
+    b.textContent=s.label;
+    b.onclick=()=>{ strategy=s.key; initStrategyButtons(); updateAll(); };
     row.appendChild(b);
   }
 }
 
 function initOutageSelect(){
-  const sel = document.getElementById("outageSelect");
-  sel.innerHTML = "";
-  const none = document.createElement("option");
-  none.value = "";
-  none.textContent = "Select corridor for outage…";
-  sel.appendChild(none);
-
+  const sel=document.getElementById("outageSelect");
+  sel.innerHTML="";
+  const opt0=document.createElement("option");
+  opt0.value="";
+  opt0.textContent="Select corridor…";
+  sel.appendChild(opt0);
   for(const e of BASE_EDGES){
-    const opt = document.createElement("option");
-    opt.value = e.id;
-    opt.textContent = e.name;
+    const opt=document.createElement("option");
+    opt.value=e.id;
+    opt.textContent=e.name;
     sel.appendChild(opt);
   }
   sel.addEventListener("change", updateAll);
 }
 
 function initToggles(){
-  const shock = document.getElementById("toggleDemandShock");
-  const outage = document.getElementById("toggleOutage");
-  const outageSel = document.getElementById("outageSelect");
-
+  const shock=document.getElementById("toggleDemandShock");
+  const outage=document.getElementById("toggleOutage");
+  const outageSel=document.getElementById("outageSelect");
   shock.addEventListener("change", updateAll);
   outage.addEventListener("change", ()=>{
-    outageSel.disabled = !outage.checked;
+    outageSel.disabled=!outage.checked;
     updateAll();
   });
 }
 
-function initInvestmentSlider(){
-  const s = document.getElementById("invSlider");
-  s.addEventListener("input", ()=>{
-    investmentMult = parseFloat(s.value);
-    updateAll();
+function initSliders(){
+  document.getElementById("invSlider").addEventListener("input", ()=>{
+    investmentMult=parseFloat(invSlider.value);
+    updateAll(false);
   });
+
+  document.getElementById("yearSlider").addEventListener("input", ()=>{
+    year=parseInt(yearSlider.value,10);
+    updateAll(false);
+  });
+}
+
+function initExecutiveToggle(){
+  document.getElementById("execBtn").addEventListener("click", ()=>{
+    executiveMode = !executiveMode;
+    document.getElementById("appRoot").classList.toggle("executive", executiveMode);
+    document.getElementById("execBtn").textContent = executiveMode ? "🧑‍💼 Executive Mode: ON" : "🧑‍💼 Executive Mode: OFF";
+  });
+}
+
+function initStoryMode(){
+  document.getElementById("storyBtn").addEventListener("click", ()=>{
+    if(storyRunning){ storyRunning=false; return; }
+    runStory();
+  });
+}
+
+function initExport(){
+  document.getElementById("exportBtn").addEventListener("click", exportCSV);
 }
 
 function initResetNodes(){
@@ -471,147 +582,139 @@ function initResetNodes(){
   });
 }
 
-function initExport(){
-  document.getElementById("exportBtn").addEventListener("click", ()=>{
-    exportCSV();
-  });
-}
-
-// ---------- Node slider render ----------
-function renderNodeSliders(){
-  const wrap = document.getElementById("nodeSliders");
-  wrap.innerHTML = "";
-
-  // Supply sliders
-  const supplyTitle = document.createElement("div");
-  supplyTitle.innerHTML = "<b>Supply</b>";
-  wrap.appendChild(supplyTitle);
-
-  for(const id of Object.keys(NODES)){
-    if(nodeSupply[id] === undefined) continue;
-    wrap.appendChild(makeNumberRow(`${NODES[id].name} supply`, nodeSupply[id], (v)=>{
-      nodeSupply[id]=v; updateAll(false);
-    }));
-  }
-
-  // Demand sliders
-  const demandTitle = document.createElement("div");
-  demandTitle.style.marginTop="10px";
-  demandTitle.innerHTML = "<b>Demand</b>";
-  wrap.appendChild(demandTitle);
-
-  for(const id of Object.keys(NODES)){
-    if(nodeDemand[id] === undefined) continue;
-    wrap.appendChild(makeNumberRow(`${NODES[id].name} demand`, nodeDemand[id], (v)=>{
-      nodeDemand[id]=v; updateAll(false);
-    }));
-  }
-
-  // Build missing links toggles
-  const buildTitle = document.createElement("div");
-  buildTitle.style.marginTop="10px";
-  buildTitle.innerHTML = "<b>Candidate new pipelines</b>";
-  wrap.appendChild(buildTitle);
-
-  for(const nl of CANDIDATE_EDGES){
-    const line = document.createElement("div");
-    line.className="row";
-    line.style.margin="6px 0";
-    line.innerHTML = `
+function renderBuildToggles(){
+  const wrap=document.getElementById("buildToggles");
+  wrap.innerHTML="";
+  for(const c of CANDIDATES){
+    const div=document.createElement("div");
+    div.className="row";
+    div.style.margin="6px 0";
+    div.innerHTML=`
       <label class="muted" style="display:flex;gap:8px;align-items:center;">
-        <input type="checkbox" id="build_${nl.id}" ${builtLinks[nl.id] ? "checked":""}/>
-        Build ${nl.name} (+${nl.buildCap} TWh cap)
+        <input type="checkbox" id="build_${c.id}" ${built[c.id]?"checked":""}/>
+        Build ${c.name} (+${c.buildCap} TWh)
       </label>
     `;
-    wrap.appendChild(line);
-
-    line.querySelector("input").addEventListener("change", (e)=>{
-      builtLinks[nl.id] = e.target.checked;
-      updateAll();
-    });
+    wrap.appendChild(div);
   }
+  document.getElementById("applyBuildsBtn").onclick=()=>{
+    for(const c of CANDIDATES){
+      built[c.id]=document.getElementById("build_"+c.id).checked;
+    }
+    updateAll();
+  };
+  document.getElementById("resetBuildsBtn").onclick=()=>{
+    built={NL1:false, NL2:false};
+    renderBuildToggles();
+    updateAll();
+  };
+}
+
+function renderNodeSliders(){
+  const wrap=document.getElementById("nodeSliders");
+  wrap.innerHTML="";
+
+  wrap.appendChild(makeTitle("Supply"));
+  for(const id of Object.keys(NODES)){
+    if(nodeSupply[id]===undefined) continue;
+    wrap.appendChild(makeNumberRow(`${NODES[id].name} supply`, nodeSupply[id], (v)=>{nodeSupply[id]=v; updateAll(false);} ));
+  }
+
+  wrap.appendChild(makeTitle("Demand"));
+  for(const id of Object.keys(NODES)){
+    if(nodeDemand[id]===undefined) continue;
+    wrap.appendChild(makeNumberRow(`${NODES[id].name} demand`, nodeDemand[id], (v)=>{nodeDemand[id]=v; updateAll(false);} ));
+  }
+}
+
+function makeTitle(txt){
+  const d=document.createElement("div");
+  d.style.marginTop="10px";
+  d.innerHTML=`<b>${txt}</b>`;
+  return d;
 }
 
 function makeNumberRow(label, value, onChange){
-  const row = document.createElement("div");
+  const row=document.createElement("div");
   row.className="row";
   row.style.justifyContent="space-between";
   row.style.margin="6px 0";
-  row.innerHTML = `
-    <div class="muted">${label}</div>
-    <input type="number" value="${value}" step="1" min="0"/>
-  `;
-  const input = row.querySelector("input");
-  input.addEventListener("change", ()=> onChange(parseFloat(input.value)||0));
+  row.innerHTML = `<div class="muted">${label}</div><input type="number" value="${value}" min="0" step="1"/>`;
+  row.querySelector("input").addEventListener("change", (e)=>onChange(parseFloat(e.target.value)||0));
   return row;
 }
 
-// ---------- Apply scenario ----------
+/* ============================================================
+   SCENARIO APPLY + YEAR RAMP
+============================================================ */
 function applyScenario(key){
   const sc = SCENARIOS.find(x=>x.key===key) || SCENARIOS[0];
 
-  // Reset build toggles for scenario (optional: stress_test turns on)
-  builtLinks = { NL1:false, NL2:false };
-  if(key==="stress_test"){
-    builtLinks.NL1 = false;
-    builtLinks.NL2 = false;
-    document.getElementById("toggleDemandShock").checked = true;
-    document.getElementById("toggleOutage").checked = true;
-    document.getElementById("outageSelect").disabled = false;
-    document.getElementById("outageSelect").value = "PU2";
+  nodeSupply = {...sc.supply};
+  nodeDemand = {...sc.demand};
+  corridorCaps = {...sc.edges};
+
+  // Stress scenario defaults
+  if(key==="stress"){
+    toggleDemandShock.checked=true;
+    toggleOutage.checked=true;
+    outageSelect.disabled=false;
+    outageSelect.value="C2";
   } else {
-    document.getElementById("toggleDemandShock").checked = false;
-    document.getElementById("toggleOutage").checked = false;
-    document.getElementById("outageSelect").disabled = true;
-    document.getElementById("outageSelect").value = "";
+    toggleDemandShock.checked=false;
+    toggleOutage.checked=false;
+    outageSelect.disabled=true;
+    outageSelect.value="";
   }
 
-  // Set base supply/demand
-  nodeSupply = { ...sc.supply };
-  nodeDemand = { ...sc.demand };
+  // Reset year & investment
+  year=2030;
+  yearSlider.value=2030;
+  investmentMult=1.0;
+  invSlider.value=1.0;
 
-  // Reset base corridor capacities
-  edgesState = BASE_EDGES.map(e => ({...e, cap: sc.edges[e.id] ?? e.cap}));
-
-  // Reset investment slider to 1× when scenario changes
-  investmentMult = 1.0;
-  document.getElementById("invSlider").value = 1.0;
-
+  // Reset builds by default
+  built={NL1:false, NL2:false};
+  renderBuildToggles();
   renderNodeSliders();
 }
 
-// ---------- Max Flow (Edmonds–Karp) ----------
-function maxFlow(edges, supply, demand){
-  const adj = new Map();
-  const cap = new Map();
+function rampValue(base, growthPerYear, year){
+  const years = year - 2030;
+  return base * Math.pow(1 + growthPerYear, years);
+}
 
+/* ============================================================
+   MAX FLOW (Edmonds–Karp)
+============================================================ */
+function maxFlow(edges, supplyArr, demandArr){
+  const adj=new Map();
+  const cap=new Map();
   function addEdge(u,v,c){
-    if(!adj.has(u)) adj.set(u, []);
-    if(!adj.has(v)) adj.set(v, []);
+    if(!adj.has(u)) adj.set(u,[]);
+    if(!adj.has(v)) adj.set(v,[]);
     adj.get(u).push(v);
     adj.get(v).push(u);
-    cap.set(`${u}->${v}`, (cap.get(`${u}->${v}`)||0) + c);
-    cap.set(`${v}->${u}`, (cap.get(`${v}->${u}`)||0) + 0);
+    cap.set(`${u}->${v}`, (cap.get(`${u}->${v}`)||0)+c);
+    cap.set(`${v}->${u}`, (cap.get(`${v}->${u}`)||0)+0);
   }
 
   const S="__S__", T="__T__";
-  edges.forEach(e => addEdge(e.from, e.to, e.cap));
-  supply.forEach(s => addEdge(S, s.node, s.twh));
-  demand.forEach(d => addEdge(d.node, T, d.twh));
+  edges.forEach(e=>addEdge(e.from,e.to,e.cap));
+  supplyArr.forEach(s=>addEdge(S,s.node,s.twh));
+  demandArr.forEach(d=>addEdge(d.node,T,d.twh));
 
   let flow=0;
-
   while(true){
-    const parent = new Map();
+    const parent=new Map();
     const q=[S];
     parent.set(S,null);
 
     while(q.length){
       const u=q.shift();
       for(const v of (adj.get(u)||[])){
-        if(!parent.has(v) && (cap.get(`${u}->${v}`)||0) > 0){
-          parent.set(v,u);
-          q.push(v);
+        if(!parent.has(v) && (cap.get(`${u}->${v}`)||0)>0){
+          parent.set(v,u); q.push(v);
         }
       }
     }
@@ -625,175 +728,165 @@ function maxFlow(edges, supply, demand){
 
     for(let v=T; parent.get(v)!==null; v=parent.get(v)){
       const u=parent.get(v);
-      cap.set(`${u}->${v}`, cap.get(`${u}->${v}`) - aug);
-      cap.set(`${v}->${u}`, (cap.get(`${v}->${u}`)||0) + aug);
+      cap.set(`${u}->${v}`, cap.get(`${u}->${v}`)-aug);
+      cap.set(`${v}->${u}`, (cap.get(`${v}->${u}`)||0)+aug);
     }
-    flow += aug;
+    flow+=aug;
   }
 
-  const utilised = edges.map(e=>{
-    const residual = cap.get(`${e.from}->${e.to}`) || 0;
-    const used = e.cap - residual;
-    const util = e.cap>0 ? used/e.cap : 0;
-    return {...e, used, utilisation: util, status: statusFromUtil(util)};
+  const utilised=edges.map(e=>{
+    const residual=cap.get(`${e.from}->${e.to}`)||0;
+    const used=e.cap-residual;
+    const util=e.cap>0? used/e.cap : 0;
+    return {...e, used, utilisation:util, status:statusFromUtil(util)};
   });
 
-  const totalDemand = demand.reduce((s,d)=>s+d.twh,0);
+  const totalDemand = demandArr.reduce((s,d)=>s+d.twh,0);
   const unmet = Math.max(0, totalDemand - flow);
   const coverage = totalDemand>0 ? flow/totalDemand : 0;
 
-  return { delivered: flow, totalDemand, unmet, coverage, utilised };
+  return {delivered:flow, totalDemand, unmet, coverage, utilised};
 }
 
-// ---------- Investment allocation ----------
-function applyInvestmentAndBuilds(){
-  // Budget proxy
-  const baseBudgetBn = 2.0;
-  const budgetBn = baseBudgetBn * investmentMult;
+/* ============================================================
+   BUILD FINAL NETWORK (investment + outages + links)
+============================================================ */
+function buildSupplyDemandForYear(){
+  const sc = SCENARIOS.find(x=>x.key===currentScenarioKey) || SCENARIOS[0];
+  const supplyArr=[];
+  const demandArr=[];
 
-  // Build candidate links if toggled
-  const newEdges = CANDIDATE_EDGES.map(e=>{
-    const built = builtLinks[e.id];
-    return {...e, cap: built ? e.buildCap : 0};
-  });
-
-  // Outage application (if enabled)
-  const outageEnabled = document.getElementById("toggleOutage").checked;
-  const outageId = document.getElementById("outageSelect").value;
-
-  // Demand shock (if enabled)
-  const shock = document.getElementById("toggleDemandShock").checked;
-
-  // Start with scenario base capacities
-  let edges = edgesState.map(e=>({...e}));
-
-  // Apply outage: set selected corridor cap to near-zero
-  if(outageEnabled && outageId){
-    const hit = edges.find(e=>e.id===outageId);
-    if(hit) hit.cap = Math.max(0.1, hit.cap * 0.05);
+  for(const [node,val] of Object.entries(nodeSupply)){
+    supplyArr.push({node, twh: rampValue(val, sc.supplyGrowthPerYear, year)});
   }
 
-  // Apply budget to upgrades (corridor capacity adds)
-  // We allocate incremental spend (budget beyond base) into capacity upgrades.
-  const baseSpendBn = baseBudgetBn; // baseline budget included
-  const upgradeSpendBn = Math.max(0, budgetBn - baseSpendBn);
+  let demandObj={...nodeDemand};
+  if(toggleDemandShock.checked){
+    if(demandObj.B!==undefined) demandObj.B*=1.20;
+    if(demandObj.D!==undefined) demandObj.D*=1.10;
+  }
 
-  // Convert spend → capacity (TWh)
-  // proxy: +1 TWh capacity costs COST_PER_TWH_BN
+  for(const [node,val] of Object.entries(demandObj)){
+    demandArr.push({node, twh: rampValue(val, sc.demandGrowthPerYear, year)});
+  }
+
+  return {supplyArr, demandArr};
+}
+
+function applyInvestmentAndOutages(edges){
+  // baseline budget proxy
+  const budgetBn = 2.0 * investmentMult;
+  budgetBn2.textContent = budgetBn.toFixed(1);
+
+  // Convert spend above base into capacity upgrades
+  const upgradeSpendBn = Math.max(0, budgetBn - 2.0);
   const upgradeTwhTotal = upgradeSpendBn / COST_PER_TWH_BN;
 
-  // Determine allocation weights by strategy using current congestion (approx)
-  // We'll do a quick pre-run with current edges (before upgrades) to estimate bottlenecks.
-  const supplyArr = buildSupplyArray(nodeSupply);
-  const demandArr = buildDemandArray(nodeDemand, shock);
+  // First run to estimate bottlenecks for weight allocation
+  const {supplyArr, demandArr} = buildSupplyDemandForYear();
+  const pre = maxFlow(edges, supplyArr, demandArr);
+  const ranked = [...pre.utilised].filter(e=>e.type==="corridor").sort((a,b)=>b.utilisation-a.utilisation);
 
-  const preEdges = [...edges, ...newEdges];
-  const pre = maxFlow(preEdges, supplyArr, demandArr);
-  const ranked = [...pre.utilised].filter(e=>e.type!=="newlink").sort((a,b)=>b.utilisation-a.utilisation);
+  const weights=new Map();
+  function setW(id,w){ weights.set(id, Math.max(0,w)); }
 
-  const w = new Map(); // id -> weight
-  function setW(id,val){ w.set(id, Math.max(0,val)); }
+  // Default low weights
+  edges.filter(e=>e.type==="corridor").forEach(e=>setW(e.id,0.2));
 
-  // Initialise
-  edges.forEach(e=>setW(e.id, 0.2));
-
-  if(strategy === "balanced"){
-    // spread + mild preference to top bottleneck
-    ranked.forEach((e,i)=> setW(e.id, i===0 ? 0.9 : i===1 ? 0.6 : 0.25));
-  } else if(strategy === "bottleneck"){
-    ranked.forEach((e,i)=> setW(e.id, i===0 ? 1.0 : i===1 ? 0.5 : 0.1));
-  } else if(strategy === "backbone"){
-    // prioritise PU2 then PU1 then PU3 (central spine first)
-    setW("PU2", 1.0); setW("PU1", 0.7); setW("PU3", 0.5);
-  } else if(strategy === "missing_first"){
-    // prioritise building missing links (if toggled), then PU3
-    // We'll allocate most upgrade to PU3 as downstream often constrains East Midlands
-    setW("PU3", 1.0); setW("PU2", 0.5); setW("PU1", 0.3);
+  if(strategy==="balanced"){
+    ranked.forEach((e,i)=> setW(e.id, i===0?0.9 : i===1?0.6 : 0.25));
+  } else if(strategy==="bottleneck"){
+    ranked.forEach((e,i)=> setW(e.id, i===0?1.0 : i===1?0.5 : 0.1));
+  } else if(strategy==="backbone"){
+    setW("C2",1.0); setW("C1",0.7); setW("C3",0.5);
+  } else if(strategy==="missing_first"){
+    setW("C3",1.0); setW("C2",0.5); setW("C1",0.3);
   }
 
-  const totalW = Array.from(w.values()).reduce((s,v)=>s+v,0) || 1;
+  const totalW = [...weights.values()].reduce((s,v)=>s+v,0) || 1;
 
-  // Apply upgrades as added capacity
+  // Apply upgrades
   edges = edges.map(e=>{
-    const add = upgradeTwhTotal * (w.get(e.id)/totalW);
-    return {...e, cap: e.cap + add};
+    if(e.type!=="corridor") return e;
+    const add = upgradeTwhTotal * ((weights.get(e.id)||0)/totalW);
+    return {...e, cap:e.cap + add};
   });
 
-  // Apply demand shock AFTER sliders (we do in buildDemandArray)
-  // Return final
-  return { budgetBn, spentBn: budgetBn, remainingBn: 0, edges:[...edges, ...newEdges], supplyArr, demandArr };
-}
-
-// ---------- Build supply/demand arrays ----------
-function buildSupplyArray(supplyObj){
-  return Object.entries(supplyObj).map(([node,twh])=>({node, twh: Number(twh)||0}));
-}
-
-function buildDemandArray(demandObj, shock){
-  const d = {...demandObj};
-  if(shock){
-    if(d.YORK !== undefined) d.YORK = d.YORK * 1.20;
-    if(d.EMID !== undefined) d.EMID = d.EMID * 1.10;
+  // Outage mode
+  if(toggleOutage.checked && outageSelect.value){
+    edges = edges.map(e=>{
+      if(e.id===outageSelect.value){
+        return {...e, cap: Math.max(0.1, e.cap*0.05)};
+      }
+      return e;
+    });
   }
-  return Object.entries(d).map(([node,twh])=>({node, twh: Number(twh)||0}));
+
+  return {edges, budgetBn};
 }
 
-// ---------- Render system chart ----------
-function drawSystemBars(demand, cap, delivered, unmet){
-  const canvas = document.getElementById("sysCanvas");
-  const ctx = canvas.getContext("2d");
-  const W = canvas.width = canvas.clientWidth * 2;
-  const H = canvas.height = 240 * 2;
+function buildEdges(){
+  // Start from scenario corridor caps
+  const corridors = BASE_EDGES.map(e=>({...e, cap: corridorCaps[e.id] ?? e.cap}));
 
+  // Add built links
+  const links = CANDIDATES.map(c=>{
+    const on = built[c.id];
+    return {...c, cap: on ? c.buildCap : 0};
+  });
+
+  return [...corridors, ...links];
+}
+
+/* ============================================================
+   RENDERERS (SVG + lists + investment + decision + explanation)
+============================================================ */
+function drawSystemBars(demand, cap, delivered, unmet){
+  const canvas=document.getElementById("sysCanvas");
+  const ctx=canvas.getContext("2d");
+  const W=canvas.width=canvas.clientWidth*2;
+  const H=canvas.height=240*2;
   ctx.clearRect(0,0,W,H);
 
-  const vals = [demand, cap, delivered, unmet];
-  const labels = ["Demand","Capacity","Delivered","Unmet"];
-  const colours = ["#3b82f6","#22c55e","#6366f1","#ef4444"];
+  const vals=[demand,cap,delivered,unmet];
+  const labels=["Demand","Capacity","Delivered","Unmet"];
+  const colours=[ "#3b82f6","#22c55e","#6366f1","#ef4444" ];
 
-  const maxV = Math.max(...vals, 1);
-  const pad = 40;
-  const bw = (W - pad*2) / vals.length * 0.6;
-  const gap = (W - pad*2) / vals.length * 0.4;
-
-  ctx.fillStyle = "#0b1224";
-  ctx.font = "24px Arial";
+  const maxV=Math.max(...vals,1);
+  const pad=40;
+  const slot=(W-pad*2)/vals.length;
+  const bw=slot*0.6;
+  const gap=slot*0.4;
 
   vals.forEach((v,i)=>{
-    const x = pad + i*(bw+gap) + gap*0.3;
-    const h = (H - 90) * (v/maxV);
-    const y = (H - 60) - h;
+    const x=pad+i*slot+gap*0.2;
+    const h=(H-90)*(v/maxV);
+    const y=(H-60)-h;
 
-    // bar
-    ctx.fillStyle = colours[i];
+    ctx.fillStyle=colours[i];
     ctx.fillRect(x,y,bw,h);
 
-    // value
-    ctx.fillStyle = "#0b1224";
-    ctx.font = "22px Arial";
-    ctx.fillText(v.toFixed(1), x, y-10);
+    ctx.fillStyle="#0b1224";
+    ctx.font="22px Arial";
+    ctx.fillText(v.toFixed(1), x, y-12);
 
-    // label
-    ctx.fillStyle = "#334155";
-    ctx.font = "22px Arial";
+    ctx.fillStyle="#334155";
+    ctx.font="22px Arial";
     ctx.fillText(labels[i], x, H-20);
   });
 }
 
-// ---------- Render corridor list ----------
 function renderCorridorList(utilised){
-  const wrap = document.getElementById("corridorList");
-  const sorted = [...utilised].filter(e=>e.type!=="newlink").sort((a,b)=>b.utilisation-a.utilisation);
-
+  const wrap=document.getElementById("corridorList");
+  const sorted=[...utilised].filter(e=>e.type==="corridor").sort((a,b)=>b.utilisation-a.utilisation);
   wrap.innerHTML = sorted.map(e=>{
-    const s = e.status;
-    const utilPct = (e.utilisation*100).toFixed(0);
-    const badge = s.badge;
+    const s=e.status;
+    const utilPct=Math.round(e.utilisation*100);
     return `
       <div style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;margin:8px 0;background:#fff;">
         <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
           <b>${e.name}</b>
-          <span class="badge ${badge}">${s.label}</span>
+          <span class="badge ${s.badge}">${s.label}</span>
         </div>
         <div class="muted">Utilisation: <b>${utilPct}%</b> · Used: <b>${e.used.toFixed(1)}</b> / Cap: <b>${e.cap.toFixed(1)}</b> TWh</div>
       </div>
@@ -801,433 +894,389 @@ function renderCorridorList(utilised){
   }).join("");
 }
 
-// ---------- Render network diagram ----------
-function renderNetworkSvg(utilised){
-  const svg = document.getElementById("netSvg");
-  svg.innerHTML = "";
+function renderInvestmentTable(utilised){
+  const tbody=document.getElementById("invTable");
+  tbody.innerHTML="";
+  const targetUtil=0.80;
 
-  const mk = (name, attrs={})=>{
-    const el = document.createElementNS("http://www.w3.org/2000/svg", name);
+  const rows=[];
+  for(const e of utilised){
+    if(e.type==="newlink"){
+      const capTarget = e.cap>0 ? e.cap : (CANDIDATES.find(x=>x.id===e.id)?.buildCap||0);
+      const cost = capTarget * COST_PER_TWH_BN;
+      rows.push({asset:e.name, util: e.cap>0? `${Math.round(e.utilisation*100)}%`:"—", need: e.cap>0?"Built":`Build ${capTarget} TWh`, cost, status:e.cap>0?"OK":"Optional"});
+      continue;
+    }
+
+    let needTwh=0;
+    if(e.utilisation>targetUtil && e.cap>0){
+      const capNeed=e.used/targetUtil;
+      needTwh=Math.max(0, capNeed-e.cap);
+    }
+    const cost=needTwh*COST_PER_TWH_BN;
+    rows.push({asset:e.name, util:`${Math.round(e.utilisation*100)}%`, need: needTwh>0?`+${needTwh.toFixed(1)} TWh`:"—", cost, status: needTwh>0?"Upgrade":"OK"});
+  }
+
+  rows.sort((a,b)=>b.cost-a.cost);
+
+  for(const r of rows){
+    const badge = r.status==="OK" ? "b-ok" : (r.status==="Upgrade" ? "b-cons" : "b-cons");
+    const tr=document.createElement("tr");
+    tr.innerHTML = `
+      <td>${r.asset}</td>
+      <td>${r.util}</td>
+      <td>${r.need}</td>
+      <td>£${r.cost.toFixed(2)}</td>
+      <td><span class="badge ${badge}">${r.status}</span></td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+function renderNetworkSvg(utilised){
+  const svg=document.getElementById("netSvg");
+  svg.innerHTML="";
+
+  const mk=(name, attrs={})=>{
+    const el=document.createElementNS("http://www.w3.org/2000/svg", name);
     Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));
     return el;
   };
 
-  // draw edges
+  // Basemap overlay (stylised region)
+  const bg = mk("path", {
+    d:"M30,40 C120,20 190,40 260,75 C330,110 360,80 420,60 C500,30 570,60 610,110 C640,150 610,180 560,210 C500,245 460,280 380,290 C310,298 250,270 200,260 C140,245 85,260 45,230 C10,205 10,165 28,130 C45,95 20,70 30,40 Z",
+    fill:"#e2e8f0",
+    opacity:"0.7"
+  });
+  svg.appendChild(bg);
+
+  // Draw edges
   for(const e of utilised){
-    const a = NODES[e.from], b = NODES[e.to];
-    const util = e.utilisation;
-    const col = util>=0.9 ? "#ef4444" : util>=0.7 ? "#f59e0b" : "#22c55e";
+    const a=NODES[e.from], b=NODES[e.to];
+    const util=e.utilisation;
+    const col = e.cap===0 ? "#7c3aed" : (util>=0.90?"#ef4444": util>=0.70?"#f59e0b":"#22c55e");
     const strokeW = e.type==="newlink" ? 3 : 6;
+    const dash = (e.type==="newlink" && e.cap===0) ? "8 8" : "0";
 
-    const line = mk("line", {
-      x1:a.x, y1:a.y, x2:b.x, y2:b.y,
-      stroke: e.cap>0 ? col : "#7c3aed",
-      "stroke-width": strokeW,
+    svg.appendChild(mk("line",{
+      x1:a.x,y1:a.y,x2:b.x,y2:b.y,
+      stroke:col,
+      "stroke-width":strokeW,
       "stroke-linecap":"round",
-      "stroke-dasharray": (e.type==="newlink" && e.cap===0) ? "8 8" : (e.type==="newlink" ? "0" : "0"),
-      opacity:"0.9"
-    });
-    svg.appendChild(line);
+      "stroke-dasharray":dash,
+      opacity:"0.92"
+    }));
 
-    // label
     const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
-    const box = mk("rect", {x:mx-82, y:my-14, width:164, height:22, rx:10, fill:"#111827", opacity:"0.85"});
-    svg.appendChild(box);
-
-    const t = mk("text", {x:mx, y:my+2, "text-anchor":"middle", "font-size":"10", fill:"#fff"});
-    const utilPct = e.cap>0 ? `${Math.round(e.utilisation*100)}%` : "not built";
-    t.textContent = `${e.id} | cap ${e.cap.toFixed(1)} | ${utilPct}`;
+    svg.appendChild(mk("rect",{x:mx-92,y:my-14,width:184,height:22,rx:10,fill:"#111827",opacity:"0.85"}));
+    const t=mk("text",{x:mx,y:my+2,"text-anchor":"middle","font-size":"10",fill:"#fff"});
+    const utilTxt = e.cap>0 ? `${Math.round(e.utilisation*100)}%` : "not built";
+    t.textContent = `${e.id} | cap ${e.cap.toFixed(1)} | ${utilTxt}`;
     svg.appendChild(t);
   }
 
-  // draw nodes
+  // Draw nodes
   for(const [id,n] of Object.entries(NODES)){
-    svg.appendChild(mk("circle",{cx:n.x, cy:n.y, r:20, fill:"#111827"}));
-    svg.appendChild(mk("circle",{cx:n.x, cy:n.y, r:22, fill:"transparent", stroke:"#334155"}));
-
-    const t = mk("text",{x:n.x, y:n.y+4, "text-anchor":"middle", "font-size":"10", fill:"#fff", "font-weight":"700"});
-    t.textContent = n.name;
+    svg.appendChild(mk("circle",{cx:n.x,cy:n.y,r:20,fill:"#111827"}));
+    svg.appendChild(mk("circle",{cx:n.x,cy:n.y,r:22,fill:"transparent",stroke:"#334155"}));
+    const t=mk("text",{x:n.x,y:n.y+4,"text-anchor":"middle","font-size":"10",fill:"#fff","font-weight":"900"});
+    t.textContent=n.name;
     svg.appendChild(t);
   }
 
-  // legend
-  svg.appendChild(mk("rect",{x:12,y:12,width:270,height:86,rx:12,fill:"#fff",opacity:"0.94"}));
-  const lt = mk("text",{x:24,y:32,"font-size":"11",fill:"#0b1224","font-weight":"800"}); lt.textContent="Legend"; svg.appendChild(lt);
-  svg.appendChild(mk("line",{x1:24,y1:48,x2:70,y2:48,stroke:"#22c55e","stroke-width":"6"}));
-  svg.appendChild(mk("text",{x:80,y:52,"font-size":"11",fill:"#0b1224"})).textContent="Healthy corridor";
-  svg.appendChild(mk("line",{x1:24,y1:66,x2:70,y2:66,stroke:"#f59e0b","stroke-width":"6"}));
-  svg.appendChild(mk("text",{x:80,y:70,"font-size":"11",fill:"#0b1224"})).textContent="Constrained corridor";
-  svg.appendChild(mk("line",{x1:24,y1:84,x2:70,y2:84,stroke:"#ef4444","stroke-width":"6"}));
-  svg.appendChild(mk("text",{x:80,y:88,"font-size":"11",fill:"#0b1224"})).textContent="Critical corridor";
-  svg.appendChild(mk("line",{x1:170,y1:66,x2:240,y2:66,stroke:"#7c3aed","stroke-width":"3","stroke-dasharray":"8 8"}));
-  svg.appendChild(mk("text",{x:250,y:70,"font-size":"11",fill:"#0b1224"})).textContent="Missing link";
+  // Legend
+  svg.appendChild(mk("rect",{x:14,y:14,width:300,height:86,rx:12,fill:"#fff",opacity:"0.95"}));
+  svg.appendChild(mk("text",{x:26,y:34,"font-size":"11",fill:"#0b1224","font-weight":"900"})).textContent="Legend";
+  svg.appendChild(mk("line",{x1:26,y1:50,x2:74,y2:50,stroke:"#22c55e","stroke-width":"6"}));
+  svg.appendChild(mk("text",{x:86,y:54,"font-size":"11",fill:"#0b1224"})).textContent="Healthy corridor";
+  svg.appendChild(mk("line",{x1:26,y1:68,x2:74,y2:68,stroke:"#f59e0b","stroke-width":"6"}));
+  svg.appendChild(mk("text",{x:86,y:72,"font-size":"11",fill:"#0b1224"})).textContent="Constrained corridor";
+  svg.appendChild(mk("line",{x1:26,y1:86,x2:74,y2:86,stroke:"#ef4444","stroke-width":"6"}));
+  svg.appendChild(mk("text",{x:86,y:90,"font-size":"11",fill:"#0b1224"})).textContent="Critical corridor";
+  svg.appendChild(mk("line",{x1:190,y1:68,x2:260,y2:68,stroke:"#7c3aed","stroke-width":"3","stroke-dasharray":"8 8"}));
+  svg.appendChild(mk("text",{x:272,y:72,"font-size":"11",fill:"#0b1224"})).textContent="Missing link";
 }
 
-// ---------- Investment table ----------
-function renderInvestmentTable(snapshot){
-  const tbody = document.getElementById("invTable");
-  tbody.innerHTML = "";
-
-  // Compute needs to bring each corridor under 80% utilisation
-  const targetUtil = 0.80;
-  let spentBn = 0;
-
-  // Corridor upgrades
-  const rows = [];
-
-  for(const e of snapshot.utilised){
-    if(e.type==="newlink"){
-      // new link build cost if built or candidate
-      const buildCostBn = e.cap>0 ? (e.cap * COST_PER_TWH_BN) : (CANDIDATE_EDGES.find(x=>x.id===e.id)?.buildCap||0) * COST_PER_TWH_BN;
-      rows.push({
-        asset:`${e.name}`,
-        util: e.cap>0 ? (e.utilisation*100).toFixed(0)+"%" : "—",
-        needed: e.cap>0 ? "—" : `Build ${CANDIDATE_EDGES.find(x=>x.id===e.id)?.buildCap||0} TWh`,
-        cost: buildCostBn,
-        action: e.cap>0 ? "Built" : "Optional"
-      });
-      continue;
-    }
-
-    const util = e.utilisation;
-    let neededTwh = 0;
-    if(util > targetUtil && e.cap>0){
-      // To reduce utilisation, need cap' >= used/targetUtil
-      const capNeeded = e.used / targetUtil;
-      neededTwh = Math.max(0, capNeeded - e.cap);
-    }
-
-    const costBn = neededTwh * COST_PER_TWH_BN;
-    rows.push({
-      asset:e.name,
-      util:(util*100).toFixed(0)+"%",
-      needed: neededTwh>0 ? `+${neededTwh.toFixed(1)} TWh` : "—",
-      cost: costBn,
-      action: neededTwh>0 ? "Upgrade" : "OK"
-    });
-  }
-
-  // Sort rows with biggest cost need first (corridors), keep new links at bottom
-  rows.sort((a,b)=>{
-    const aIsNew = a.asset.includes("new link") || a.asset.includes("Yorkshire → East Midlands");
-    const bIsNew = b.asset.includes("new link") || b.asset.includes("Yorkshire → East Midlands");
-    if(aIsNew && !bIsNew) return 1;
-    if(!aIsNew && bIsNew) return -1;
-    return (b.cost - a.cost);
-  });
-
-  rows.forEach(r=>{
-    const badge = r.action==="Upgrade" ? "b-cons" : (r.action==="OK" ? "b-ok" : "b-cons");
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${r.asset}</td>
-      <td>${r.util}</td>
-      <td>${r.needed}</td>
-      <td>£${r.cost.toFixed(2)}</td>
-      <td><span class="badge ${badge}">${r.action}</span></td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  // Budget display
-  document.getElementById("spentBn").textContent = snapshot.budgetBn.toFixed(1);
-  document.getElementById("remainBn").textContent = "0.0";
-}
-
-// ---------- Decision Summary ----------
 function renderDecisionSummary(snapshot){
-  const cov = snapshot.coverage;
-  const unmet = snapshot.unmet;
+  const cov=snapshot.coverage;
+  const unmet=snapshot.unmet;
 
-  const sorted = [...snapshot.utilised].filter(e=>e.type!=="newlink").sort((a,b)=>b.utilisation-a.utilisation);
-  const worst = sorted[0];
+  const corridors=[...snapshot.utilised].filter(e=>e.type==="corridor").sort((a,b)=>b.utilisation-a.utilisation);
+  const worst=corridors[0];
 
   const statusLine =
-    cov >= 0.80 ? "✅ Healthy (meets 80% target)" :
-    cov >= 0.60 ? "⚠️ Constrained (below target)" :
-                 "❌ Underdeveloped (significant shortfall)";
+    cov>=0.80 ? "✅ Healthy (meets 80% target)" :
+    cov>=0.60 ? "⚠️ Constrained (below target)" :
+                "❌ Underdeveloped (significant shortfall)";
 
-  const nextActions = [];
-
-  if(cov < 0.80){
-    nextActions.push(`1) Increase capacity where utilisation is highest: ${worst.name} (~${Math.round(worst.utilisation*100)}%).`);
-    nextActions.push(`2) Consider building a new bypass link if congestion persists (Teesside→Humber or Yorkshire→East Midlands).`);
+  const actions=[];
+  if(cov<0.80){
+    actions.push(`1) Upgrade highest congestion corridor: ${worst.name} (~${Math.round(worst.utilisation*100)}%).`);
+    actions.push(`2) Consider building a cross-link to bypass congestion (CrossLink‑1 / CrossLink‑2).`);
   } else {
-    nextActions.push(`1) Reduce peak congestion to improve resilience: start with ${worst.name} (~${Math.round(worst.utilisation*100)}%).`);
-    nextActions.push(`2) Stress test outages and demand shocks to validate headroom.`);
+    actions.push(`1) Reduce congestion for resilience: start with ${worst.name}.`);
+    actions.push(`2) Validate headroom using outage + demand shock.`);
   }
+  actions.push(`3) Use “Bottleneck-first” strategy when the goal is fastest coverage improvement.`);
 
-  // Suggest strategy
-  const best = recommendStrategy(snapshot.multiplier, snapshot.baseSupplyArr, snapshot.baseDemandArr, snapshot.shockEnabled, snapshot.outageEnabled, snapshot.outageId);
-  nextActions.push(`3) Recommended strategy right now: ${best.label} (expected coverage ${(best.coverage*100).toFixed(1)}%).`);
-
-  document.getElementById("decisionStatus").textContent = statusLine;
-  document.getElementById("decisionBody").textContent =
-`Coverage: ${(cov*100).toFixed(1)}% | Unmet: ${unmet.toFixed(1)} TWh/y
-Top bottleneck: ${worst.name} at ~${Math.round(worst.utilisation*100)}% utilisation
+  decisionStatus.textContent=statusLine;
+  decisionBody.textContent =
+`Year: ${year} | Coverage: ${(cov*100).toFixed(1)}% | Unmet: ${unmet.toFixed(1)} TWh/y
+Top bottleneck: ${worst.name} (~${Math.round(worst.utilisation*100)}% utilisation)
 
 Recommended next actions:
-${nextActions.join("\n")}`;
+${actions.join("\n")}`;
 }
 
-// ---------- Strategy recommendation (simulate quickly) ----------
-function recommendStrategy(multiplier, supplyArr, demandArr, shockEnabled, outageEnabled, outageId){
-  const opts = [
-    {key:"balanced", label:"Balanced"},
-    {key:"bottleneck", label:"Bottleneck-first"},
-    {key:"backbone", label:"Backbone-first"},
-    {key:"missing_first", label:"Missing-links-first"}
-  ];
+function renderAIExplanation(snapshot){
+  const cov=snapshot.coverage;
+  const unmet=snapshot.unmet;
 
-  let best = null;
+  const corridors=[...snapshot.utilised].filter(e=>e.type==="corridor").sort((a,b)=>b.utilisation-a.utilisation);
+  const worst=corridors[0];
 
-  for(const opt of opts){
-    const snap = runModel(multiplier, opt.key, supplyArr, demandArr, shockEnabled, outageEnabled, outageId);
-    const worst = [...snap.utilised].filter(e=>e.type!=="newlink").sort((a,b)=>b.utilisation-a.utilisation)[0];
-    const score = snap.coverage*1000 - (worst.utilisation*10);
-    if(!best || score > best.score){
-      best = { ...opt, coverage:snap.coverage, score };
+  const builtLinks = snapshot.utilised.filter(e=>e.type==="newlink" && e.cap>0).map(e=>e.name);
+  const missingLinks = snapshot.utilised.filter(e=>e.type==="newlink" && e.cap===0).map(e=>e.name);
+
+  let msg =
+`At year ${year}, the system delivers ${(cov*100).toFixed(1)}% of total demand.
+Unmet demand is ${unmet.toFixed(1)} TWh/y, which is primarily driven by congestion on “${worst.name}”.
+
+Recommended plan:
+• Focus investment to relieve the bottleneck corridor first (improves delivered volume fastest).
+• If congestion persists after upgrades, build a bypass link (candidate cross-links).`;
+
+  if(builtLinks.length){
+    msg += `\n\nNew links currently built:\n• ${builtLinks.join("\n• ")}`;
+  }
+  if(missingLinks.length){
+    msg += `\n\nCandidate links not built:\n• ${missingLinks.join("\n• ")}`;
+  }
+
+  aiExplain.textContent = msg;
+}
+
+/* ============================================================
+   COPILOT (LOCAL)
+============================================================ */
+function addMsg(role, text){
+  const box=document.getElementById("chatBox");
+  const div=document.createElement("div");
+  div.className="bubble "+(role==="user"?"user":"assistant");
+  div.textContent=(role==="user"?"You: ":"Copilot: ")+text;
+  box.appendChild(div);
+  box.scrollTop=box.scrollHeight;
+}
+
+function localCopilotAnswer(question){
+  const s=lastSnapshot;
+  if(!s) return "Move a slider so I can analyse the network.";
+
+  const q=question.toLowerCase();
+  const corridors=[...s.utilised].filter(e=>e.type==="corridor").sort((a,b)=>b.utilisation-a.utilisation);
+  const worst=corridors[0];
+
+  if(q.includes("bottleneck")||q.includes("constraint")){
+    return `Main bottleneck: ${worst.name} (~${Math.round(worst.utilisation*100)}% utilisation).
+This corridor is limiting delivery and causing unmet demand (${s.unmet.toFixed(1)} TWh/y).`;
+  }
+
+  if(q.includes("reach")||q.includes("80")||q.includes("target")){
+    if(s.coverage>=0.80){
+      return `You’re already ≥80% coverage (${(s.coverage*100).toFixed(1)}%).
+Next best step: reduce congestion to improve resilience — start with ${worst.name}.`;
+    }
+    return `You’re at ${(s.coverage*100).toFixed(1)}% coverage, below 80%.
+Fastest route: upgrade the most congested corridor first (${worst.name}).`;
+  }
+
+  if(q.includes("recommend")||q.includes("strategy")){
+    return `Recommendation: Bottleneck-first.
+Reason: it prioritises upgrades on the most congested corridor, typically delivering the fastest coverage gains.`;
+  }
+
+  if(q.includes("invest")||q.includes("priority")){
+    const need = computeTopInvestmentNeed(s.utilised);
+    return `Prioritise: ${need.asset}
+Upgrade needed: ${need.needText} (≈ £${need.costBn.toFixed(2)}bn).`;
+  }
+
+  return `Snapshot:
+Year ${year} | Coverage ${(s.coverage*100).toFixed(1)}% | Unmet ${s.unmet.toFixed(1)} TWh/y
+Top bottleneck: ${worst.name} (~${Math.round(worst.utilisation*100)}%)
+
+Try: “Main bottleneck”, “Reach 80%”, “What investment first?”`;
+}
+
+function computeTopInvestmentNeed(utilised){
+  const targetUtil=0.80;
+  let best=null;
+
+  for(const e of utilised){
+    if(e.type!=="corridor") continue;
+    let needTwh=0;
+    if(e.utilisation>targetUtil && e.cap>0){
+      const capNeed=e.used/targetUtil;
+      needTwh=Math.max(0, capNeed-e.cap);
+    }
+    const costBn=needTwh*COST_PER_TWH_BN;
+    if(!best || costBn>best.costBn){
+      best = {asset:e.name, needTwh, costBn, needText: needTwh>0?`+${needTwh.toFixed(1)} TWh`:"—"};
     }
   }
-  return best;
+
+  return best || {asset:"No urgent upgrades", needTwh:0, costBn:0, needText:"—"};
 }
 
-// ---------- Run model (core) ----------
-function runModel(mult, strat, supplyArr, demandArr, shockEnabled, outageEnabled, outageId){
-  // set global strategy temporarily
-  const prev = strategy;
-  strategy = strat;
+function bindCopilot(){
+  sendBtn.onclick=()=>{
+    const q=(chatInput.value||"").trim();
+    if(!q) return;
+    addMsg("user", q);
+    chatInput.value="";
+    addMsg("assistant", localCopilotAnswer(q));
+  };
 
-  // apply investment/builds with provided mult
-  const prevMult = investmentMult;
-  investmentMult = mult;
+  chatInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter") sendBtn.click(); });
 
-  // mirror UI toggles temporarily
-  const edgesPlus = applyInvestmentAndBuilds();
-  const res = maxFlow(edgesPlus.edges, supplyArr, demandArr);
+  chip1.onclick=()=>{ addMsg("user","What is the main bottleneck?"); addMsg("assistant", localCopilotAnswer("bottleneck")); };
+  chip2.onclick=()=>{ addMsg("user","Recommend strategy"); addMsg("assistant", localCopilotAnswer("recommend")); };
+  chip3.onclick=()=>{ addMsg("user","How do we reach 80%?"); addMsg("assistant", localCopilotAnswer("reach 80")); };
+  chip4.onclick=()=>{ addMsg("user","What investment first?"); addMsg("assistant", localCopilotAnswer("invest priority")); };
 
-  // restore global
-  strategy = prev;
-  investmentMult = prevMult;
-
-  return { ...res, budgetBn: edgesPlus.budgetBn };
+  addMsg("assistant","Hi — I’m your planning Copilot. Change year/investment or build links, then ask about bottlenecks and investment priorities.");
 }
 
-// ---------- CSV export ----------
+/* ============================================================
+   CSV EXPORT
+============================================================ */
 function exportCSV(){
   if(!lastSnapshot) return;
 
-  const lines = [];
+  const lines=[];
   lines.push(["Metric","Value"].join(","));
+  lines.push(["Programme", N.programme].join(","));
+  lines.push(["Year", year].join(","));
   lines.push(["Scenario", currentScenarioKey].join(","));
-  lines.push(["Investment multiplier", lastSnapshot.multiplier].join(","));
-  lines.push(["Budget (£bn)", lastSnapshot.budgetBn.toFixed(1)].join(","));
+  lines.push(["Investment multiplier", investmentMult].join(","));
+  lines.push(["Budget (£bn)", (2.0*investmentMult).toFixed(1)].join(","));
   lines.push(["Total demand (TWh)", lastSnapshot.totalDemand.toFixed(2)].join(","));
   lines.push(["Delivered (TWh)", lastSnapshot.delivered.toFixed(2)].join(","));
   lines.push(["Coverage", (lastSnapshot.coverage*100).toFixed(1)+"%"].join(","));
   lines.push(["Unmet (TWh)", lastSnapshot.unmet.toFixed(2)].join(","));
   lines.push("");
 
-  lines.push(["Pipelines","From","To","Cap(TWh)","Used(TWh)","Util(%)","Status"].join(","));
+  lines.push(["Pipeline","From","To","Cap(TWh)","Used(TWh)","Util(%)","Type"].join(","));
   lastSnapshot.utilised.forEach(e=>{
-    const status = e.status?.label || "";
-    lines.push([e.name, e.from, e.to, e.cap.toFixed(2), e.used.toFixed(2), (e.utilisation*100).toFixed(0), status].join(","));
+    lines.push([e.name, NODES[e.from].name, NODES[e.to].name, e.cap.toFixed(2), e.used.toFixed(2), (e.utilisation*100).toFixed(0), e.type].join(","));
   });
 
-  const csv = lines.join("\n");
-  const blob = new Blob([csv], {type:"text/csv"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "east_coast_h2_dashboard_export.csv";
+  const csv=lines.join("\n");
+  const blob=new Blob([csv],{type:"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="hydrogen_dashboard_export.csv";
   a.click();
   URL.revokeObjectURL(url);
 }
 
-// ---------- Copilot UI ----------
-function addMsg(role, text){
-  const box = document.getElementById("chatBox");
-  const div = document.createElement("div");
-  div.className = "bubble " + (role==="user" ? "user":"assistant");
-  div.textContent = (role==="user" ? "You: " : "Copilot: ") + text;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
+/* ============================================================
+   STORY MODE (Feature #1)
+============================================================ */
+async function runStory(){
+  storyRunning=true;
+  storyBtn.textContent="⏸ Stop Story";
+
+  // Animate investment from 1→5, pause, then back to 1
+  const seq=[1,1.5,2,2.5,3,3.5,4,4.5,5,4.5,4,3.5,3,2.5,2,1.5,1];
+  for(const v of seq){
+    if(!storyRunning) break;
+    investmentMult=v;
+    invSlider.value=v;
+    updateAll(false);
+    await new Promise(r=>setTimeout(r, 350));
+  }
+
+  storyRunning=false;
+  storyBtn.textContent="▶ Play Scenario Story";
 }
 
-function localCopilotAnswer(question){
-  const s = lastSnapshot;
-  if(!s) return "Move the investment slider or change a scenario so I can analyse the network.";
-
-  const q = question.toLowerCase();
-  const corridors = [...s.utilised].filter(e=>e.type!=="newlink").sort((a,b)=>b.utilisation-a.utilisation);
-  const worst = corridors[0];
-
-  if(q.includes("bottleneck") || q.includes("constraint")){
-    return `Main bottleneck: ${worst.name} (~${Math.round(worst.utilisation*100)}% utilisation).
-This segment is limiting delivered hydrogen and driving unmet demand (${s.unmet.toFixed(1)} TWh/y).`;
-  }
-
-  if(q.includes("reach") || q.includes("80") || q.includes("target")){
-    if(s.coverage >= 0.80){
-      return `You’re already at ${(s.coverage*100).toFixed(1)}% coverage (≥80%).
-Next step: reduce congestion for resilience — start with ${worst.name}.`;
-    }
-    return `You’re at ${(s.coverage*100).toFixed(1)}% coverage, below the 80% target.
-Fastest path: upgrade the most congested corridor first (${worst.name}), then reassess.`;
-  }
-
-  if(q.includes("recommend") || q.includes("best strategy")){
-    const best = recommendStrategy(s.multiplier, s.baseSupplyArr, s.baseDemandArr, s.shockEnabled, s.outageEnabled, s.outageId);
-    return `Recommendation: ${best.label}.
-Reason: highest coverage under current conditions (≈ ${(best.coverage*100).toFixed(1)}%).`;
-  }
-
-  if(q.includes("what invest") || q.includes("investment first") || q.includes("prioritise")){
-    const inv = computeUpgradeNeeds(s.utilised);
-    const top = inv.filter(x=>x.type==="corridor" && x.neededTwh>0).sort((a,b)=>b.costBn-a.costBn)[0];
-    if(!top) return "No urgent upgrades needed under the 80% utilisation threshold. Consider resilience upgrades or building redundancy links.";
-    return `Prioritise: ${top.name}
-Why: it’s the largest upgrade needed to bring utilisation under 80%.
-Upgrade needed: +${top.neededTwh.toFixed(1)} TWh (≈ £${top.costBn.toFixed(2)}bn).`;
-  }
-
-  return `Snapshot:
-Coverage ${(s.coverage*100).toFixed(1)}% | Unmet ${s.unmet.toFixed(1)} TWh/y
-Top bottleneck: ${worst.name} (~${Math.round(worst.utilisation*100)}%)
-
-Try: “Recommend strategy”, “What’s the bottleneck?”, “How do we reach 80%?”, “What investment first?”`;
-}
-
-function bindCopilot(){
-  document.getElementById("sendBtn").addEventListener("click", ()=>{
-    const input = document.getElementById("chatInput");
-    const q = (input.value||"").trim();
-    if(!q) return;
-    addMsg("user", q);
-    input.value="";
-    addMsg("assistant", localCopilotAnswer(q));
-  });
-
-  document.getElementById("chatInput").addEventListener("keydown", (e)=>{
-    if(e.key==="Enter") document.getElementById("sendBtn").click();
-  });
-
-  document.getElementById("chip1").addEventListener("click", ()=>{
-    addMsg("user","What is the main bottleneck?");
-    addMsg("assistant", localCopilotAnswer("bottleneck"));
-  });
-  document.getElementById("chip2").addEventListener("click", ()=>{
-    addMsg("user","Recommend the best strategy");
-    addMsg("assistant", localCopilotAnswer("recommend strategy"));
-  });
-  document.getElementById("chip3").addEventListener("click", ()=>{
-    addMsg("user","How do we reach 80% coverage?");
-    addMsg("assistant", localCopilotAnswer("reach 80"));
-  });
-  document.getElementById("chip4").addEventListener("click", ()=>{
-    addMsg("user","What investment first?");
-    addMsg("assistant", localCopilotAnswer("investment first"));
-  });
-
-  addMsg("assistant","Hi — I’m your planning Copilot. Move the slider or choose a scenario, then ask me about bottlenecks or investment priorities.");
-}
-
-// ---------- Upgrade needs computation (for Copilot + planning) ----------
-function computeUpgradeNeeds(utilised){
-  const targetUtil = 0.80;
-  const needs = [];
-
-  for(const e of utilised){
-    if(e.type==="newlink"){
-      const capTarget = CANDIDATE_EDGES.find(x=>x.id===e.id)?.buildCap || 0;
-      const costBn = capTarget * COST_PER_TWH_BN;
-      needs.push({type:"newlink", name:e.name, neededTwh: capTarget, costBn});
-      continue;
-    }
-
-    let neededTwh = 0;
-    if(e.utilisation > targetUtil && e.cap>0){
-      const capNeeded = e.used / targetUtil;
-      neededTwh = Math.max(0, capNeeded - e.cap);
-    }
-    needs.push({type:"corridor", name:e.name, neededTwh, costBn: neededTwh*COST_PER_TWH_BN});
-  }
-  return needs;
-}
-
-// ---------- Main update ----------
+/* ============================================================
+   MAIN UPDATE
+============================================================ */
 function updateAll(refreshNodeUI=true){
-  // Investment UI
-  document.getElementById("invMultLabel").textContent = investmentMult.toFixed(1)+"×";
-  document.getElementById("budgetBn").textContent = (2.0*investmentMult).toFixed(1);
-  document.getElementById("deliveryWindow").textContent = deliveryWindowFor(investmentMult);
+  yearLabel.textContent=String(year);
+  invMultLabel.textContent=investmentMult.toFixed(1)+"×";
+  budgetBn.textContent=(2.0*investmentMult).toFixed(1);
+  budgetBn2.textContent=(2.0*investmentMult).toFixed(1);
+  deliveryWindow.textContent=deliveryWindowFor(investmentMult);
 
-  // Apply final edges + supply/demand arrays
-  const shockEnabled = document.getElementById("toggleDemandShock").checked;
-  const outageEnabled = document.getElementById("toggleOutage").checked;
-  const outageId = document.getElementById("outageSelect").value;
+  // Build base edges
+  let edges = buildEdges();
 
-  const { budgetBn, edges, supplyArr, demandArr } = applyInvestmentAndBuilds();
+  // Apply investment + outages
+  const {edges: upgradedEdges} = applyInvestmentAndOutages(edges);
+  edges = upgradedEdges;
+
+  // Supply/demand arrays with year ramp
+  const {supplyArr, demandArr} = buildSupplyDemandForYear();
 
   // Run flow
-  const result = maxFlow(edges, supplyArr, demandArr);
+  const res = maxFlow(edges, supplyArr, demandArr);
 
-  // KPI update
-  document.getElementById("kpiDemand").textContent = result.totalDemand.toFixed(2);
+  // KPIs
   const capSum = edges.reduce((s,e)=>s+e.cap,0);
-  document.getElementById("kpiCap").textContent = capSum.toFixed(2);
-  document.getElementById("kpiDel").textContent = result.delivered.toFixed(2);
-  document.getElementById("kpiCov").textContent = pct(result.coverage);
-  document.getElementById("kpiUnmet").textContent = result.unmet.toFixed(2);
+  kpiDemand.textContent = res.totalDemand.toFixed(2);
+  kpiCap.textContent = capSum.toFixed(2);
+  kpiDel.textContent = res.delivered.toFixed(2);
+  kpiCov.textContent = pct(res.coverage);
+  kpiUnmet.textContent = res.unmet.toFixed(2);
 
-  // Readiness bar
-  const readiness = clamp(result.coverage/0.80, 0, 1);
-  document.getElementById("readinessPct").textContent = pct(readiness);
-  document.getElementById("readinessBar").style.width = (readiness*100).toFixed(0)+"%";
+  const readiness = clamp(res.coverage/0.80, 0, 1);
+  readinessPct.textContent = pct(readiness);
+  readinessBar.style.width = (readiness*100).toFixed(0)+"%";
 
-  // Draw system bars
-  drawSystemBars(result.totalDemand, capSum, result.delivered, result.unmet);
+  // Render visuals
+  drawSystemBars(res.totalDemand, capSum, res.delivered, res.unmet);
+  renderNetworkSvg(res.utilised);
 
-  // Corridor list
-  renderCorridorList(result.utilised);
+  if(!executiveMode){
+    renderCorridorList(res.utilised);
+    renderInvestmentTable(res.utilised);
+  }
 
-  // SVG network
-  renderNetworkSvg(result.utilised);
-
-  // Investment needs table
-  renderInvestmentTable({ utilised: result.utilised, budgetBn });
-
-  // Decision summary
-  const snap = {
-    ...result,
-    multiplier: investmentMult,
-    budgetBn,
-    baseSupplyArr: supplyArr,
-    baseDemandArr: demandArr,
-    shockEnabled,
-    outageEnabled,
-    outageId
-  };
+  // Decision + AI explanation
+  const snap = {...res, utilised: res.utilised, multiplier: investmentMult};
   renderDecisionSummary(snap);
+  renderAIExplanation(snap);
 
-  // store snapshot for Copilot
+  // Snapshot for Copilot
   lastSnapshot = snap;
 
-  // refresh node UI if requested
-  if(refreshNodeUI) renderNodeSliders();
+  if(refreshNodeUI && !executiveMode){
+    renderNodeSliders();
+  }
 }
 
-// ---------- Init ----------
+/* ============================================================
+   WIRING + INIT
+============================================================ */
 (function init(){
   initScenarioDropdown();
   initStrategyButtons();
   initOutageSelect();
   initToggles();
-  initInvestmentSlider();
-  initResetNodes();
+  initSliders();
+  initExecutiveToggle();
+  initStoryMode();
   initExport();
+  initResetNodes();
+  renderBuildToggles();
   bindCopilot();
 
+  // initial
   applyScenario(currentScenarioKey);
   updateAll();
 })();
