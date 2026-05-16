@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "name": "East Coast Hydrogen Network (screening model)",
+    "topologyBasis": "Project Union: East Coast described as Teesside → Yorkshire → Humber → East Midlands"
+  },
+  "nodes": [
+    { "id": "TEES", "name": "Teesside", "type": "cluster", "x": 90,  "y": 80 },
+    { "id": "YORK", "name": "Yorkshire", "type": "region",  "x": 250, "y": 190 },
+    { "id": "HUMB", "name": "Humber",   "type": "cluster", "x": 410, "y": 110 },
+    { "id": "EMID", "name": "East Midlands", "type": "region", "x": 520, "y": 240 }
+  ],
+  "edges": [
+    { "id": "PU1", "name": "Project Union: East Coast (Teesside → Yorkshire)", "from": "TEES", "to": "YORK", "cap": 18 },
+    { "id": "PU2", "name": "Project Union: East Coast (Yorkshire → Humber)", "from": "YORK", "to": "HUMB", "cap": 18 },
+    { "id": "PU3", "name": "Project Union: East Coast (Humber → East Midlands)", "from": "HUMB", "to": "EMID", "cap": 14 }
+  ],
+  "supply": [
+    { "node": "TEES", "twh": 28 },
+    { "node": "HUMB", "twh": 22 }
+  ],
+  "demand": [
+    { "node": "YORK", "twh": 20 },
+    { "node": "HUMB", "twh": 25 },
+    { "node": "EMID", "twh": 18 }
+  ]
+}
